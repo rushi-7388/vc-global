@@ -1,15 +1,12 @@
 
 import { ReactNode } from "react"
-import { authClient } from "@/lib/auth-client"
 
 interface AuthProviderProps {
   children: ReactNode
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  return (
-    <authClient.SessionProvider>
-      {children}
-    </authClient.SessionProvider>
-  )
+  // Better-auth doesn't require a SessionProvider wrapper
+  // The auth client handles session management internally
+  return <>{children}</>
 }
