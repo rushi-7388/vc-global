@@ -1,73 +1,71 @@
-# Welcome to your Lovable project
 
-## Project info
+# V&C Global - Premium Tiles & Marbles
 
-**URL**: https://lovable.dev/projects/9c11855e-bad7-4940-a2e6-ef76d6d6eea4
+A modern web application for V&C Global, showcasing premium tiles, marbles, and sanitary products with a focus on quality and customer service.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- Responsive design with modern UI/UX
+- Product catalog with filtering capabilities
+- Contact forms and quotation requests
+- Authentication system
+- Mobile-friendly interface
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/9c11855e-bad7-4940-a2e6-ef76d6d6eea4) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
+## Technologies Used
 
 This project is built with:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- **Vite** - Fast build tool and development server
+- **TypeScript** - Type-safe JavaScript
+- **React** - UI library
+- **Shadcn/UI** - Modern component library
+- **Tailwind CSS** - Utility-first CSS framework
+- **Supabase** - Backend as a Service
 
-## How can I deploy this project?
+## Getting Started
 
-Simply open [Lovable](https://lovable.dev/projects/9c11855e-bad7-4940-a2e6-ef76d6d6eea4) and click on Share -> Publish.
+### Prerequisites
 
-## Can I connect a custom domain to my Lovable project?
+- Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-Yes, you can!
+### Installation
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+1. Clone the repository:
+```sh
+git clone <YOUR_GIT_URL>
+cd <YOUR_PROJECT_NAME>
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+2. Install dependencies:
+```sh
+npm install
+```
+
+3. Set up environment variables:
+```sh
+cp .env.example .env
+# Edit .env with your actual values
+```
+
+4. Start the development server:
+```sh
+npm run dev
+```
+
+The application will be available at `http://localhost:8080`
+
+## Building for Production
+
+```sh
+npm run build
+```
+
+## Contact Information
+
+- **Email**: vcglobal1012@gmail.com
+- **Phone**: +91 99786 06345, +91 72650 55583
+- **Instagram**: @vcglobal_
+
+## Company Motto
+
+**RULE THE QUALITY** - Providing premium tiles and sanitary products with reliable nationwide & global delivery.
