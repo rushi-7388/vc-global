@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Phone, Mail } from "lucide-react";
+import { AuthButton } from "@/components/AuthButton";
 import { env } from "@/config/env";
 
 export const Header = () => {
@@ -67,8 +68,9 @@ export const Header = () => {
             ))}
           </div>
 
-          {/* CTA Button */}
-          <div className="hidden md:block">
+          {/* Auth Button and CTA */}
+          <div className="hidden md:flex items-center space-x-4">
+            <AuthButton />
             <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
               Get Quote
             </Button>
@@ -99,9 +101,12 @@ export const Header = () => {
                   {item.name}
                 </a>
               ))}
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground w-full font-semibold">
-                Get Quote
-              </Button>
+              <div className="pt-4 space-y-2">
+                <AuthButton />
+                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground w-full font-semibold">
+                  Get Quote
+                </Button>
+              </div>
             </div>
           </div>
         )}

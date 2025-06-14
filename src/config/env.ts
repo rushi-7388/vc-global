@@ -18,6 +18,10 @@ export const env = {
   COMPANY_PHONE_2: import.meta.env.VITE_COMPANY_PHONE_2 || '+91 72650 55583',
   COMPANY_INSTAGRAM: import.meta.env.VITE_COMPANY_INSTAGRAM || '@vcglobal_',
   
+  // Authentication Configuration
+  GOOGLE_CLIENT_ID: import.meta.env.VITE_GOOGLE_CLIENT_ID || '',
+  GOOGLE_CLIENT_SECRET: import.meta.env.VITE_GOOGLE_CLIENT_SECRET || '',
+  
   // Feature Flags
   ENABLE_ANALYTICS: import.meta.env.VITE_ENABLE_ANALYTICS === 'true',
   ENABLE_CHAT_SUPPORT: import.meta.env.VITE_ENABLE_CHAT_SUPPORT === 'true',
