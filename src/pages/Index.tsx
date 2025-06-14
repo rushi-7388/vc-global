@@ -2,9 +2,13 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { ProductGrid } from "@/components/ProductGrid";
 import { CategoryFilter } from "@/components/CategoryFilter";
+import { AboutSection } from "@/components/AboutSection";
+import { ServicesSection } from "@/components/ServicesSection";
+import { Footer } from "@/components/Footer";
 import { Loader2 } from "lucide-react";
 
 const Index = () => {
@@ -51,39 +55,46 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Header />
       <Hero />
       
-      <div className="container mx-auto px-4 py-12">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Our Premium Collection
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Discover our exquisite range of Italian marbles, designer tiles, and natural stones. 
-            Each piece is carefully selected to bring elegance and luxury to your spaces.
-          </p>
+      <section id="products" className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Our Premium Collection
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Discover our exquisite range of Italian marbles, designer tiles, and natural stones. 
+              Each piece is carefully selected to bring elegance and luxury to your spaces.
+            </p>
+          </div>
+
+          {categories && (
+            <CategoryFilter
+              categories={categories}
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+            />
+          )}
+
+          {isLoading ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+            </div>
+          ) : products ? (
+            <ProductGrid products={products} />
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No products found.</p>
+            </div>
+          )}
         </div>
+      </section>
 
-        {categories && (
-          <CategoryFilter
-            categories={categories}
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-          />
-        )}
-
-        {isLoading ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-          </div>
-        ) : products ? (
-          <ProductGrid products={products} />
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No products found.</p>
-          </div>
-        )}
-      </div>
+      <AboutSection />
+      <ServicesSection />
+      <Footer />
     </div>
   );
 };
