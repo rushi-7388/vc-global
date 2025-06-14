@@ -9,7 +9,229 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      categories: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+        }
+        Relationships: []
+      }
+      customers: {
+        Row: {
+          address: string | null
+          city: string | null
+          company_name: string | null
+          country: string | null
+          created_at: string | null
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          phone: string | null
+          state: string | null
+          user_id: string | null
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          company_name?: string | null
+          country?: string | null
+          created_at?: string | null
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          phone?: string | null
+          state?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          company_name?: string | null
+          country?: string | null
+          created_at?: string | null
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          phone?: string | null
+          state?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          category_id: string | null
+          created_at: string | null
+          description: string | null
+          finish_type: string | null
+          id: string
+          image_urls: string[] | null
+          in_stock: boolean | null
+          is_premium: boolean | null
+          material_type: string | null
+          name: string
+          origin_country: string | null
+          price_per_sqft: number | null
+          size_options: string[] | null
+          thickness_mm: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          finish_type?: string | null
+          id?: string
+          image_urls?: string[] | null
+          in_stock?: boolean | null
+          is_premium?: boolean | null
+          material_type?: string | null
+          name: string
+          origin_country?: string | null
+          price_per_sqft?: number | null
+          size_options?: string[] | null
+          thickness_mm?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          finish_type?: string | null
+          id?: string
+          image_urls?: string[] | null
+          in_stock?: boolean | null
+          is_premium?: boolean | null
+          material_type?: string | null
+          name?: string
+          origin_country?: string | null
+          price_per_sqft?: number | null
+          size_options?: string[] | null
+          thickness_mm?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quotation_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          notes: string | null
+          product_id: string | null
+          quantity_sqft: number | null
+          quotation_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          product_id?: string | null
+          quantity_sqft?: number | null
+          quotation_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          product_id?: string | null
+          quantity_sqft?: number | null
+          quotation_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotation_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotation_items_quotation_id_fkey"
+            columns: ["quotation_id"]
+            isOneToOne: false
+            referencedRelation: "quotation_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quotation_requests: {
+        Row: {
+          additional_notes: string | null
+          created_at: string | null
+          customer_id: string | null
+          id: string
+          preferred_budget: number | null
+          project_name: string | null
+          project_type: string | null
+          status: string | null
+          timeline: string | null
+          total_area_sqft: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          additional_notes?: string | null
+          created_at?: string | null
+          customer_id?: string | null
+          id?: string
+          preferred_budget?: number | null
+          project_name?: string | null
+          project_type?: string | null
+          status?: string | null
+          timeline?: string | null
+          total_area_sqft?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          additional_notes?: string | null
+          created_at?: string | null
+          customer_id?: string | null
+          id?: string
+          preferred_budget?: number | null
+          project_name?: string | null
+          project_type?: string | null
+          status?: string | null
+          timeline?: string | null
+          total_area_sqft?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotation_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
