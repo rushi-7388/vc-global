@@ -20,7 +20,7 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'cinzel': ['Cinzel', 'serif'],
+				'sans': ['Inter', 'system-ui', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',

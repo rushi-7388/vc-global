@@ -27,8 +27,8 @@ export const CategoryFilter = ({
         className={cn(
           "px-6 py-3 text-sm font-medium transition-all",
           selectedCategory === null 
-            ? "bg-blue-600 text-white shadow-lg" 
-            : "hover:bg-blue-50 hover:text-blue-600"
+            ? "bg-primary text-primary-foreground shadow-lg" 
+            : "hover:bg-primary/10 hover:text-primary"
         )}
       >
         All Products
@@ -42,8 +42,8 @@ export const CategoryFilter = ({
           className={cn(
             "px-6 py-3 text-sm font-medium transition-all",
             selectedCategory === category.id 
-              ? "bg-blue-600 text-white shadow-lg" 
-              : "hover:bg-blue-50 hover:text-blue-600"
+              ? "bg-primary text-primary-foreground shadow-lg" 
+              : "hover:bg-primary/10 hover:text-primary"
           )}
         >
           {category.name}

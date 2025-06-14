@@ -26,13 +26,13 @@ export const ServicesSection = () => {
   ];
 
   return (
-    <section id="services" className="py-20 bg-black border-t border-yellow-900">
+    <section id="services" className="py-20 bg-background border-t border-border">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-yellow-400 mb-4 font-cinzel">
+          <h2 className="text-4xl font-bold text-primary mb-4">
             Our Services
           </h2>
-          <p className="text-xl text-yellow-200 max-w-3xl mx-auto font-cinzel">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             From consultation to installation, we provide comprehensive services 
             to make your dream space a reality.
           </p>
@@ -40,34 +40,34 @@ export const ServicesSection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {services.map((service, index) => (
-            <div key={index} className="bg-yellow-400/5 p-6 rounded-lg border border-yellow-400/20 hover:border-yellow-400/40 transition-all">
-              <div className="bg-yellow-400/20 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                <service.icon className="h-6 w-6 text-yellow-400" />
+            <div key={index} className="bg-card p-6 rounded-lg border border-border hover:border-primary/40 transition-all">
+              <div className="bg-primary/20 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                <service.icon className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold text-yellow-400 mb-3 font-cinzel">
+              <h3 className="text-xl font-semibold text-primary mb-3">
                 {service.title}
               </h3>
-              <p className="text-yellow-200 font-cinzel">
+              <p className="text-muted-foreground">
                 {service.description}
               </p>
             </div>
           ))}
         </div>
 
-        <div className="mt-16 bg-yellow-400/5 border border-yellow-400/20 rounded-2xl p-8 md:p-12">
+        <div className="mt-16 bg-card border border-border rounded-2xl p-8 md:p-12">
           <div className="text-center">
-            <h3 className="text-3xl font-bold text-yellow-400 mb-6 font-cinzel">
+            <h3 className="text-3xl font-bold text-primary mb-6">
               Ready to Transform Your Space?
             </h3>
-            <p className="text-xl text-yellow-200 mb-8 max-w-2xl mx-auto font-cinzel">
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
               Get a free consultation and quote for your project. Our experts are ready 
               to help you create the perfect space with our premium materials.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-yellow-500 hover:bg-yellow-600 text-black px-8 py-3 rounded-lg font-semibold transition-colors font-cinzel">
+              <button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded-lg font-semibold transition-colors">
                 Get Free Quote
               </button>
-              <button className="border border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black px-8 py-3 rounded-lg font-semibold transition-colors font-cinzel">
+              <button className="border border-primary text-primary hover:bg-primary hover:text-primary-foreground px-8 py-3 rounded-lg font-semibold transition-colors">
                 Schedule Consultation
               </button>
             </div>

@@ -54,17 +54,17 @@ const Index = () => {
   const isLoading = categoriesLoading || productsLoading;
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-background">
       <Header />
       <Hero />
       
-      <section id="products" className="py-20 bg-black">
+      <section id="products" className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-yellow-400 mb-4 font-cinzel">
+            <h2 className="text-4xl font-bold text-primary mb-4">
               Our Premium Collection
             </h2>
-            <p className="text-xl text-yellow-200 max-w-3xl mx-auto font-cinzel">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Discover our exquisite range of Italian marbles, designer tiles, and natural stones. 
               Each piece is carefully selected to bring elegance and luxury to your spaces.
             </p>
@@ -80,13 +80,13 @@ const Index = () => {
 
           {isLoading ? (
             <div className="flex justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-yellow-400" />
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : products ? (
             <ProductGrid products={products} />
           ) : (
             <div className="text-center py-12">
-              <p className="text-yellow-200 font-cinzel">No products found.</p>
+              <p className="text-muted-foreground">No products found.</p>
             </div>
           )}
         </div>
