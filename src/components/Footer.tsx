@@ -11,7 +11,7 @@ export const Footer = () => {
           <div>
             <div className="flex items-center mb-4">
               <img 
-                src="/lovable-uploads/af9a4a81-ee64-4ccf-923f-54687632a24f.png" 
+                src="/uploads/pic2.png" 
                 alt="V&C Global Logo" 
                 className="h-8 w-8 mr-2"
               />

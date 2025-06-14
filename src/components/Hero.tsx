@@ -12,7 +12,7 @@ export const Hero = () => {
         <div className="max-w-4xl mx-auto text-center">
           <div className="flex items-center justify-center mb-6">
             <img 
-              src="/lovable-uploads/8fc6217e-c3e7-4f1f-bfbf-3b14cb156d5d.png" 
+              src="/uploads/pic1.png" 
               alt="V&C Global Logo" 
               className="h-16 w-16 mr-4"
             />
