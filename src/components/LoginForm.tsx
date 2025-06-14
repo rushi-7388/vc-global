@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -6,6 +5,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { signIn, signUp } from "@/lib/auth-client"
 import { useToast } from "@/hooks/use-toast"
+import { useNavigate } from "react-router-dom"
 
 export const LoginForm = () => {
   const [isLogin, setIsLogin] = useState(true)
@@ -14,6 +14,7 @@ export const LoginForm = () => {
   const [name, setName] = useState("")
   const [loading, setLoading] = useState(false)
   const { toast } = useToast()
+  const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -29,6 +30,7 @@ export const LoginForm = () => {
           title: "Success",
           description: "Logged in successfully!",
         })
+        navigate("/")
       } else {
         await signUp.email({
           email,
@@ -37,10 +39,11 @@ export const LoginForm = () => {
         })
         toast({
           title: "Success",
-          description: "Account created successfully!",
+          description: "Account created successfully! Please check your email to verify your account.",
         })
       }
     } catch (error: any) {
+      console.error("Auth error:", error)
       toast({
         title: "Error",
         description: error.message || "Authentication failed",
