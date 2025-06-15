@@ -3,25 +3,13 @@ import { supabase } from "@/integrations/supabase/client";
 
 // Connection pool configuration for better performance
 export const configureSupabaseForHighLoad = () => {
-  // Enable connection pooling and optimize settings
-  const originalFrom = supabase.from.bind(supabase);
-  
-  supabase.from = (table: string) => {
-    const query = originalFrom(table);
-    
-    // Add connection pooling headers
-    const originalSelect = query.select.bind(query);
-    query.select = (...args: any[]) => {
-      const result = originalSelect(...args);
-      return result;
-    };
-    
-    return query;
-  };
+  // This function can be used to configure connection settings
+  // Currently Supabase handles connection pooling automatically
+  console.log('Supabase configured for high load scenarios');
 };
 
 // Batch operations for bulk inserts
-export const batchInsert = async (table: string, data: any[], batchSize = 100) => {
+export const batchInsert = async (table: 'products' | 'categories' | 'contact_submissions' | 'customers' | 'quotation_items' | 'quotation_requests', data: any[], batchSize = 100) => {
   const results = [];
   
   for (let i = 0; i < data.length; i += batchSize) {
