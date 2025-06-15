@@ -9,19 +9,21 @@ import { ServicesSection } from "@/components/ServicesSection";
 import { Footer } from "@/components/Footer";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { useProductsQuery } from "@/hooks/useProductsQuery";
+import { PerformanceMonitor } from "@/components/PerformanceMonitor";
+import { useOptimizedProductsQuery } from "@/hooks/useOptimizedProductsQuery";
 import { useCategoriesQuery } from "@/hooks/useCategoriesQuery";
 
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const { data: categories, isLoading: categoriesLoading } = useCategoriesQuery();
-  const { data: products, isLoading: productsLoading } = useProductsQuery(selectedCategory);
+  const { data: products, isLoading: productsLoading } = useOptimizedProductsQuery(selectedCategory);
 
   const isLoading = categoriesLoading || productsLoading;
 
   return (
     <ErrorBoundary>
+      <PerformanceMonitor />
       <div className="min-h-screen bg-background">
         <Header />
         <Hero />

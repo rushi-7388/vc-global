@@ -2,6 +2,7 @@
 import React, { memo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { LazyImage } from '@/components/LazyImage';
 
 interface Product {
   id: string;
@@ -26,24 +27,17 @@ interface OptimizedProductCardProps {
 }
 
 const OptimizedProductCard = memo(({ product }: OptimizedProductCardProps) => {
+  const imageUrl = product.image_urls?.[0] || "https://images.unsplash.com/photo-1615971677499-5467cbab01c0?q=80&w=500";
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
       <CardHeader className="p-0">
-        {product.image_urls && product.image_urls.length > 0 ? (
-          <img
-            src={product.image_urls[0]}
-            alt={product.name}
-            className="w-full h-48 object-cover"
-            loading="lazy"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = '/placeholder.svg';
-            }}
-          />
-        ) : (
-          <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-400">No image available</span>
-          </div>
-        )}
+        <LazyImage
+          src={imageUrl}
+          alt={product.name}
+          className="w-full h-48 object-cover"
+          onError={() => console.log(`Failed to load image for ${product.name}`)}
+        />
       </CardHeader>
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-2">
@@ -86,6 +80,11 @@ const OptimizedProductCard = memo(({ product }: OptimizedProductCardProps) => {
       </CardContent>
     </Card>
   );
+}, (prevProps, nextProps) => {
+  // Custom comparison for better memoization
+  return prevProps.product.id === nextProps.product.id &&
+         prevProps.product.name === nextProps.product.name &&
+         prevProps.product.price_per_sqft === nextProps.product.price_per_sqft;
 });
 
 OptimizedProductCard.displayName = 'OptimizedProductCard';

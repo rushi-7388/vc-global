@@ -4,10 +4,11 @@ import { Footer } from "@/components/Footer";
 import { ProductGrid } from "@/components/ProductGrid";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { useProductsQuery } from "@/hooks/useProductsQuery";
+import { PerformanceMonitor } from "@/components/PerformanceMonitor";
+import { useOptimizedProductsQuery } from "@/hooks/useOptimizedProductsQuery";
 
 const Products = () => {
-  const { data: products, isLoading, error } = useProductsQuery();
+  const { data: products, isLoading, error } = useOptimizedProductsQuery();
 
   if (error) {
     console.error('Error fetching products:', error);
@@ -15,6 +16,7 @@ const Products = () => {
 
   return (
     <ErrorBoundary>
+      <PerformanceMonitor />
       <div className="min-h-screen bg-background">
         <Header />
         <main className="container mx-auto px-4 py-8">
