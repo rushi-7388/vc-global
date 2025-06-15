@@ -17,11 +17,11 @@ export const Hero = () => {
               alt="V&C Global Logo" 
               className="h-16 w-16 mr-4"
             />
-            <span className="text-primary font-semibold text-lg">RULE THE QUALITY</span>
+            <span className="text-yellow-400 font-semibold text-lg">RULE THE QUALITY</span>
           </div>
           
           <h1 className="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
-            {env.APP_NAME}
+            <span className="text-yellow-400">{env.APP_NAME}</span>
             <span className="block text-primary">Tiles & Marbles</span>
           </h1>
           
