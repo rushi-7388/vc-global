@@ -6,9 +6,9 @@ export const useOptimizedProductsQuery = (selectedCategory?: string | null) => {
   return useThrottledQuery({
     queryKey: ['products', selectedCategory],
     queryFn: async () => {
-      // Use connection speed to determine query optimization
-      const connectionSpeed = navigator.connection ? 
-        (navigator.connection as any).effectiveType : 'fast';
+      // Use connection speed to determine query optimization with proper type checking
+      const connection = (navigator as any).connection;
+      const connectionSpeed = connection?.effectiveType || 'fast';
       
       let query = supabase
         .from('products')
