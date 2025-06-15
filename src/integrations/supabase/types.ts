@@ -33,6 +33,48 @@ export type Database = {
         }
         Relationships: []
       }
+      consultation_requests: {
+        Row: {
+          consultation_type: string | null
+          created_at: string | null
+          email: string
+          id: string
+          message: string | null
+          name: string
+          phone: string | null
+          preferred_date: string | null
+          preferred_time: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          consultation_type?: string | null
+          created_at?: string | null
+          email: string
+          id?: string
+          message?: string | null
+          name: string
+          phone?: string | null
+          preferred_date?: string | null
+          preferred_time?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          consultation_type?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          message?: string | null
+          name?: string
+          phone?: string | null
+          preferred_date?: string | null
+          preferred_time?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       contact_submissions: {
         Row: {
           created_at: string | null

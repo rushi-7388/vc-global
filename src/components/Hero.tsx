@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Calendar } from "lucide-react";
 import { env } from "@/config/env";
 import { Link } from "react-router-dom";
 
@@ -33,7 +33,7 @@ export const Hero = () => {
             <p className="text-muted-foreground mb-4 text-lg">• UNIQUE COLLECTIONS FOR INTERIOR DESIGNERS.</p>
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <Link to="/products">
               <Button size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black text-lg px-8 py-4 font-semibold">
                 Explore Collection
@@ -47,6 +47,19 @@ export const Hero = () => {
                 className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black text-lg px-8 py-4 font-semibold"
               >
                 Request Quote
+              </Button>
+            </Link>
+          </div>
+
+          <div className="mb-12">
+            <p className="text-muted-foreground mb-4 text-lg">Ready to transform your space?</p>
+            <Link to="/consultation">
+              <Button 
+                size="lg" 
+                className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8 py-4 font-semibold"
+              >
+                <Calendar className="mr-2 h-5 w-5" />
+                Schedule Consultation
               </Button>
             </Link>
           </div>

@@ -19,6 +19,7 @@ const Services = lazy(() => import("./pages/Services"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Quote = lazy(() => import("./pages/Quote"));
 const ReachOut = lazy(() => import("./pages/ReachOut"));
+const Consultation = lazy(() => import("./pages/Consultation"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Enhanced QueryClient for extreme high-load scenarios
@@ -76,6 +77,7 @@ const App = () => {
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/quote" element={<Quote />} />
                   <Route path="/reach-out" element={<ReachOut />} />
+                  <Route path="/consultation" element={<Consultation />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
