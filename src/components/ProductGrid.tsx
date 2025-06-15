@@ -20,10 +20,10 @@ interface Product {
 }
 
 interface ProductGridProps {
-  products: Product[];
+  products?: Product[];
 }
 
-export const ProductGrid = ({ products }: ProductGridProps) => {
+export const ProductGrid = ({ products = [] }: ProductGridProps) => {
   if (products.length === 0) {
     return (
       <div className="text-center py-16">
