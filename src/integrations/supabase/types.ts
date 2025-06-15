@@ -33,6 +33,45 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_submissions: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          message: string | null
+          name: string
+          password: string
+          phone: string | null
+          status: string | null
+          submission_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          message?: string | null
+          name: string
+          password: string
+          phone?: string | null
+          status?: string | null
+          submission_type?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          message?: string | null
+          name?: string
+          password?: string
+          phone?: string | null
+          status?: string | null
+          submission_type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       customers: {
         Row: {
           address: string | null

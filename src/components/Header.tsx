@@ -4,16 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, Phone, Mail } from "lucide-react";
 import { AuthButton } from "@/components/AuthButton";
 import { env } from "@/config/env";
+import { Link } from "react-router-dom";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navigation = [
-    { name: "Home", href: "#" },
-    { name: "Products", href: "#products" },
-    { name: "About", href: "#about" },
-    { name: "Services", href: "#services" },
-    { name: "Contact", href: "#contact" },
+    { name: "Home", href: "/" },
+    { name: "Products", href: "/products" },
+    { name: "About", href: "/about" },
+    { name: "Services", href: "/services" },
+    { name: "Contact", href: "/contact" },
   ];
 
   return (
@@ -41,7 +42,7 @@ export const Header = () => {
       <nav className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <div className="flex items-center">
+          <Link to="/" className="flex items-center">
             <img 
               src="/uploads/pic2.png" 
               alt="V&C Global Logo" 
@@ -53,27 +54,29 @@ export const Header = () => {
               </h1>
               <p className="text-xs text-muted-foreground">RULE THE QUALITY</p>
             </div>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {navigation.map((item) => (
-              <a
+              <Link
                 key={item.name}
-                href={item.href}
+                to={item.href}
                 className="text-foreground hover:text-primary font-medium transition-colors"
               >
                 {item.name}
-              </a>
+              </Link>
             ))}
           </div>
 
           {/* Auth Button and CTA */}
           <div className="hidden md:flex items-center space-x-4">
             <AuthButton />
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
-              Get Quote
-            </Button>
+            <Link to="/quote">
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+                Get Quote
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -92,20 +95,22 @@ export const Header = () => {
           <div className="md:hidden mt-4 pb-4">
             <div className="flex flex-col space-y-4">
               {navigation.map((item) => (
-                <a
+                <Link
                   key={item.name}
-                  href={item.href}
+                  to={item.href}
                   className="text-foreground hover:text-primary font-medium transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
-                </a>
+                </Link>
               ))}
               <div className="pt-4 space-y-2">
                 <AuthButton />
-                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground w-full font-semibold">
-                  Get Quote
-                </Button>
+                <Link to="/quote">
+                  <Button className="bg-primary hover:bg-primary/90 text-primary-foreground w-full font-semibold">
+                    Get Quote
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>

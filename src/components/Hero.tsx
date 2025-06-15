@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { env } from "@/config/env";
+import { Link } from "react-router-dom";
 
 export const Hero = () => {
   return (
@@ -33,17 +34,21 @@ export const Hero = () => {
           </div>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8 py-4 font-semibold">
-              Explore Collection
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground text-lg px-8 py-4 font-semibold"
-            >
-              Request Quote
-            </Button>
+            <Link to="/products">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8 py-4 font-semibold">
+                Explore Collection
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+            <Link to="/quote">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground text-lg px-8 py-4 font-semibold"
+              >
+                Request Quote
+              </Button>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
