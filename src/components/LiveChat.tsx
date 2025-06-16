@@ -21,10 +21,9 @@ export const LiveChat = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  const [userInfo, setUserInfo] = useState({ name: '', email: '' });
-  const [isUserInfoSet, setIsUserInfoSet] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const channelRef = useRef<any>(null);
   const { toast } = useToast();
 
   const scrollToBottom = () => {
@@ -59,9 +58,17 @@ export const LiveChat = () => {
 
     fetchMessages();
 
-    // Set up real-time subscription for chat messages
-    const channel = supabase
-      .channel('chat-messages')
+    // Clean up any existing channel first
+    if (channelRef.current) {
+      console.log('Cleaning up existing chat channel');
+      supabase.removeChannel(channelRef.current);
+      channelRef.current = null;
+    }
+
+    // Set up real-time subscription for chat messages with unique channel name
+    const channelName = `chat-messages-${Math.random().toString(36).substr(2, 9)}`;
+    channelRef.current = supabase
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
@@ -70,11 +77,12 @@ export const LiveChat = () => {
           table: 'chat_messages'
         },
         (payload) => {
+          console.log('New chat message received:', payload);
           const newChatMessage = payload.new as ChatMessage;
           setMessages(prev => [...prev, newChatMessage]);
           
           // Show toast for admin messages
-          if (newChatMessage.is_admin && newChatMessage.sender_email !== userInfo.email) {
+          if (newChatMessage.is_admin) {
             toast({
               title: "New message from support",
               description: newChatMessage.message,
@@ -84,13 +92,19 @@ export const LiveChat = () => {
       )
       .subscribe();
 
+    console.log('Chat realtime subscription established');
+
     return () => {
-      supabase.removeChannel(channel);
+      console.log('Cleaning up chat realtime subscription');
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
     };
-  }, [isOpen, toast, userInfo.email]);
+  }, [isOpen, toast]);
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !isUserInfoSet || isLoading) return;
+    if (!newMessage.trim() || isLoading) return;
 
     setIsLoading(true);
     try {
@@ -98,8 +112,8 @@ export const LiveChat = () => {
         .from('chat_messages')
         .insert([{
           message: newMessage,
-          sender_name: userInfo.name,
-          sender_email: userInfo.email,
+          sender_name: 'Guest User',
+          sender_email: 'guest@example.com',
           is_admin: false
         }]);
 
@@ -115,17 +129,6 @@ export const LiveChat = () => {
       });
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleUserInfoSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (userInfo.name && userInfo.email) {
-      setIsUserInfoSet(true);
-      toast({
-        title: "Welcome to live chat!",
-        description: "You can now start chatting with our support team.",
-      });
     }
   };
 
@@ -157,91 +160,65 @@ export const LiveChat = () => {
           </CardHeader>
           
           <CardContent className="p-0 flex flex-col h-80">
-            {!isUserInfoSet ? (
-              <form onSubmit={handleUserInfoSubmit} className="p-4 space-y-3">
-                <p className="text-sm text-muted-foreground">
-                  Please provide your details to start chatting:
-                </p>
-                <Input
-                  placeholder="Your name"
-                  value={userInfo.name}
-                  onChange={(e) => setUserInfo(prev => ({ ...prev, name: e.target.value }))}
-                  required
-                />
-                <Input
-                  type="email"
-                  placeholder="Your email"
-                  value={userInfo.email}
-                  onChange={(e) => setUserInfo(prev => ({ ...prev, email: e.target.value }))}
-                  required
-                />
-                <Button type="submit" className="w-full">
-                  Start Chat
-                </Button>
-              </form>
-            ) : (
-              <>
-                <ScrollArea className="flex-1 p-4">
-                  <div className="space-y-3">
-                    {messages.length === 0 ? (
-                      <div className="text-center py-8">
-                        <MessageSquare className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                        <p className="text-sm text-muted-foreground">
-                          Start a conversation! We're here to help.
+            <ScrollArea className="flex-1 p-4">
+              <div className="space-y-3">
+                {messages.length === 0 ? (
+                  <div className="text-center py-8">
+                    <MessageSquare className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                    <p className="text-sm text-muted-foreground">
+                      Welcome! Start a conversation with our support team.
+                    </p>
+                  </div>
+                ) : (
+                  messages.map((message) => (
+                    <div
+                      key={message.id}
+                      className={`flex ${message.is_admin ? 'justify-start' : 'justify-end'}`}
+                    >
+                      <div
+                        className={`max-w-[80%] p-3 rounded-lg text-sm ${
+                          message.is_admin
+                            ? 'bg-muted text-foreground rounded-bl-none'
+                            : 'bg-primary text-primary-foreground rounded-br-none'
+                        }`}
+                      >
+                        <p className="break-words">{message.message}</p>
+                        <p className="text-xs opacity-70 mt-1">
+                          {message.is_admin ? 'Support' : 'You'} • 
+                          {new Date(message.created_at).toLocaleTimeString([], { 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                          })}
                         </p>
                       </div>
-                    ) : (
-                      messages.map((message) => (
-                        <div
-                          key={message.id}
-                          className={`flex ${message.is_admin ? 'justify-start' : 'justify-end'}`}
-                        >
-                          <div
-                            className={`max-w-[80%] p-3 rounded-lg text-sm ${
-                              message.is_admin
-                                ? 'bg-muted text-foreground rounded-bl-none'
-                                : 'bg-primary text-primary-foreground rounded-br-none'
-                            }`}
-                          >
-                            <p className="break-words">{message.message}</p>
-                            <p className="text-xs opacity-70 mt-1">
-                              {message.is_admin ? 'Support' : 'You'} • 
-                              {new Date(message.created_at).toLocaleTimeString([], { 
-                                hour: '2-digit', 
-                                minute: '2-digit' 
-                              })}
-                            </p>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                    <div ref={messagesEndRef} />
-                  </div>
-                </ScrollArea>
+                    </div>
+                  ))
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+            </ScrollArea>
 
-                <div className="p-4 border-t bg-muted/30">
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Type your message..."
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
-                      disabled={isLoading}
-                    />
-                    <Button 
-                      onClick={handleSendMessage} 
-                      size="sm" 
-                      disabled={isLoading || !newMessage.trim()}
-                    >
-                      <Send className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Press Enter to send
-                  </p>
-                </div>
-              </>
-            )}
+            <div className="p-4 border-t bg-muted/30">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Type your message..."
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
+                  disabled={isLoading}
+                />
+                <Button 
+                  onClick={handleSendMessage} 
+                  size="sm" 
+                  disabled={isLoading || !newMessage.trim()}
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Press Enter to send
+              </p>
+            </div>
           </CardContent>
         </Card>
       )}
