@@ -22,8 +22,11 @@ export const useRealtimeConsultations = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    console.log('Setting up realtime consultation subscription...');
+    
     // Fetch existing consultations
     const fetchConsultations = async () => {
+      console.log('Fetching existing consultations...');
       const { data, error } = await supabase
         .from('consultation_requests')
         .select('*')
@@ -34,6 +37,7 @@ export const useRealtimeConsultations = () => {
         return;
       }
 
+      console.log('Fetched consultations:', data?.length || 0);
       setConsultations(data || []);
     };
 
@@ -50,6 +54,7 @@ export const useRealtimeConsultations = () => {
           table: 'consultation_requests'
         },
         (payload) => {
+          console.log('New consultation request received:', payload);
           const newConsultation = payload.new as ConsultationRequest;
           
           // Add to consultations list
@@ -81,6 +86,7 @@ export const useRealtimeConsultations = () => {
           table: 'consultation_requests'
         },
         (payload) => {
+          console.log('Consultation updated:', payload);
           const updatedConsultation = payload.new as ConsultationRequest;
           
           // Update consultations list
@@ -96,7 +102,10 @@ export const useRealtimeConsultations = () => {
       )
       .subscribe();
 
+    console.log('Realtime subscription established');
+
     return () => {
+      console.log('Cleaning up realtime subscription');
       supabase.removeChannel(channel);
     };
   }, [toast]);
@@ -104,11 +113,15 @@ export const useRealtimeConsultations = () => {
   // Request notification permission on mount
   useEffect(() => {
     if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
+      console.log('Requesting notification permission...');
+      Notification.requestPermission().then(permission => {
+        console.log('Notification permission:', permission);
+      });
     }
   }, []);
 
   const markAsRead = () => {
+    console.log('Marking notifications as read');
     setNewRequestCount(0);
   };
 

@@ -23,6 +23,7 @@ export const LiveChat = () => {
   const [newMessage, setNewMessage] = useState('');
   const [userInfo, setUserInfo] = useState({ name: '', email: '' });
   const [isUserInfoSet, setIsUserInfoSet] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -37,6 +38,27 @@ export const LiveChat = () => {
   useEffect(() => {
     if (!isOpen) return;
 
+    // Fetch existing messages when chat opens
+    const fetchMessages = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('chat_messages')
+          .select('*')
+          .order('created_at', { ascending: true });
+
+        if (error) {
+          console.error('Error fetching messages:', error);
+          return;
+        }
+
+        setMessages(data || []);
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+      }
+    };
+
+    fetchMessages();
+
     // Set up real-time subscription for chat messages
     const channel = supabase
       .channel('chat-messages')
@@ -50,6 +72,14 @@ export const LiveChat = () => {
         (payload) => {
           const newChatMessage = payload.new as ChatMessage;
           setMessages(prev => [...prev, newChatMessage]);
+          
+          // Show toast for admin messages
+          if (newChatMessage.is_admin && newChatMessage.sender_email !== userInfo.email) {
+            toast({
+              title: "New message from support",
+              description: newChatMessage.message,
+            });
+          }
         }
       )
       .subscribe();
@@ -57,11 +87,12 @@ export const LiveChat = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [isOpen]);
+  }, [isOpen, toast, userInfo.email]);
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !isUserInfoSet) return;
+    if (!newMessage.trim() || !isUserInfoSet || isLoading) return;
 
+    setIsLoading(true);
     try {
       const { error } = await supabase
         .from('chat_messages')
@@ -82,6 +113,8 @@ export const LiveChat = () => {
         description: "Failed to send message. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -89,6 +122,10 @@ export const LiveChat = () => {
     e.preventDefault();
     if (userInfo.name && userInfo.email) {
       setIsUserInfoSet(true);
+      toast({
+        title: "Welcome to live chat!",
+        description: "You can now start chatting with our support team.",
+      });
     }
   };
 
@@ -103,7 +140,7 @@ export const LiveChat = () => {
         <Button
           onClick={toggleChat}
           size="lg"
-          className="rounded-full h-14 w-14 shadow-lg"
+          className="rounded-full h-14 w-14 shadow-lg hover:scale-105 transition-transform"
         >
           <MessageSquare className="h-6 w-6" />
         </Button>
@@ -111,10 +148,10 @@ export const LiveChat = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <Card className="fixed bottom-20 right-4 w-80 h-96 z-50 shadow-2xl">
-          <CardHeader className="flex flex-row items-center justify-between p-4">
+        <Card className="fixed bottom-20 right-4 w-80 h-96 z-50 shadow-2xl border-2">
+          <CardHeader className="flex flex-row items-center justify-between p-4 bg-primary text-primary-foreground rounded-t-lg">
             <CardTitle className="text-lg">Live Chat Support</CardTitle>
-            <Button variant="ghost" size="sm" onClick={toggleChat}>
+            <Button variant="ghost" size="sm" onClick={toggleChat} className="text-primary-foreground hover:bg-primary-foreground/20">
               <X className="h-4 w-4" />
             </Button>
           </CardHeader>
@@ -145,11 +182,14 @@ export const LiveChat = () => {
             ) : (
               <>
                 <ScrollArea className="flex-1 p-4">
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {messages.length === 0 ? (
-                      <p className="text-sm text-muted-foreground text-center">
-                        Start a conversation! We're here to help.
-                      </p>
+                      <div className="text-center py-8">
+                        <MessageSquare className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                        <p className="text-sm text-muted-foreground">
+                          Start a conversation! We're here to help.
+                        </p>
+                      </div>
                     ) : (
                       messages.map((message) => (
                         <div
@@ -157,16 +197,19 @@ export const LiveChat = () => {
                           className={`flex ${message.is_admin ? 'justify-start' : 'justify-end'}`}
                         >
                           <div
-                            className={`max-w-[80%] p-2 rounded-lg text-sm ${
+                            className={`max-w-[80%] p-3 rounded-lg text-sm ${
                               message.is_admin
-                                ? 'bg-muted text-foreground'
-                                : 'bg-primary text-primary-foreground'
+                                ? 'bg-muted text-foreground rounded-bl-none'
+                                : 'bg-primary text-primary-foreground rounded-br-none'
                             }`}
                           >
-                            <p>{message.message}</p>
+                            <p className="break-words">{message.message}</p>
                             <p className="text-xs opacity-70 mt-1">
                               {message.is_admin ? 'Support' : 'You'} • 
-                              {new Date(message.created_at).toLocaleTimeString()}
+                              {new Date(message.created_at).toLocaleTimeString([], { 
+                                hour: '2-digit', 
+                                minute: '2-digit' 
+                              })}
                             </p>
                           </div>
                         </div>
@@ -176,18 +219,26 @@ export const LiveChat = () => {
                   </div>
                 </ScrollArea>
 
-                <div className="p-4 border-t">
+                <div className="p-4 border-t bg-muted/30">
                   <div className="flex gap-2">
                     <Input
                       placeholder="Type your message..."
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                      onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
+                      disabled={isLoading}
                     />
-                    <Button onClick={handleSendMessage} size="sm">
+                    <Button 
+                      onClick={handleSendMessage} 
+                      size="sm" 
+                      disabled={isLoading || !newMessage.trim()}
+                    >
                       <Send className="h-4 w-4" />
                     </Button>
                   </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Press Enter to send
+                  </p>
                 </div>
               </>
             )}
