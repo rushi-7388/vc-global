@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -20,6 +20,7 @@ export const useRealtimeConsultations = () => {
   const [consultations, setConsultations] = useState<ConsultationRequest[]>([]);
   const [newRequestCount, setNewRequestCount] = useState(0);
   const { toast } = useToast();
+  const channelRef = useRef<any>(null);
 
   useEffect(() => {
     console.log('Setting up realtime consultation subscription...');
@@ -43,9 +44,17 @@ export const useRealtimeConsultations = () => {
 
     fetchConsultations();
 
-    // Set up real-time subscription
-    const channel = supabase
-      .channel('consultation-changes')
+    // Clean up any existing channel first
+    if (channelRef.current) {
+      console.log('Cleaning up existing channel');
+      supabase.removeChannel(channelRef.current);
+      channelRef.current = null;
+    }
+
+    // Set up real-time subscription with unique channel name
+    const channelName = `consultation-changes-${Math.random().toString(36).substr(2, 9)}`;
+    channelRef.current = supabase
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
@@ -106,7 +115,10 @@ export const useRealtimeConsultations = () => {
 
     return () => {
       console.log('Cleaning up realtime subscription');
-      supabase.removeChannel(channel);
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
     };
   }, [toast]);
 
