@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +8,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { preloadCriticalResources } from "@/utils/performanceOptimizations";
 import { lazy, Suspense, useEffect } from "react";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { LiveChat } from "@/components/LiveChat";
 
 // Lazy load components for code splitting
 const Index = lazy(() => import("./pages/Index"));
@@ -81,6 +81,7 @@ const App = () => {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
+              <LiveChat />
             </BrowserRouter>
           </TooltipProvider>
         </AuthProvider>
