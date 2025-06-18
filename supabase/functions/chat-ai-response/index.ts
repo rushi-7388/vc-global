@@ -37,7 +37,7 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Call OpenAI API
+    // Call OpenAI API with the latest model
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -66,10 +66,14 @@ serve(async (req) => {
       
       // Handle specific error cases
       if (response.status === 429) {
-        const errorObj = JSON.parse(errorData);
-        if (errorObj.error?.code === 'insufficient_quota') {
-          aiResponse = "I apologize, but our AI service is temporarily unavailable due to quota limits. Please contact our support team directly at support@vcglobal.com for immediate assistance.";
-        } else {
+        try {
+          const errorObj = JSON.parse(errorData);
+          if (errorObj.error?.code === 'insufficient_quota') {
+            aiResponse = "I apologize, but our AI service is temporarily unavailable due to quota limits. Please contact our support team directly at support@vcglobal.com for immediate assistance.";
+          } else {
+            aiResponse = "I'm currently experiencing high traffic. Please wait a moment and try again.";
+          }
+        } catch {
           aiResponse = "I'm currently experiencing high traffic. Please wait a moment and try again.";
         }
       } else if (response.status === 401) {
