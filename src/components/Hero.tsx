@@ -46,7 +46,7 @@ export const Hero = () => {
                 size="lg" 
                 className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black text-lg px-8 py-4 font-semibold"
               >
-                Request Quote
+                Get Quote Now
               </Button>
             </Link>
           </div>
@@ -64,7 +64,7 @@ export const Hero = () => {
             </Link>
           </div> */}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
             <div className="bg-card backdrop-blur-sm rounded-lg p-6 border border-border">
               <h3 className="text-xl font-bold text-yellow-400 mb-2">VRUSHANG GHEEWALA</h3>
               <p className="text-muted-foreground">{env.COMPANY_PHONE_1}</p>
@@ -73,7 +73,7 @@ export const Hero = () => {
               <h3 className="text-xl font-bold text-yellow-400 mb-2">CHIRAG RAJPUT</h3>
               <p className="text-muted-foreground">{env.COMPANY_PHONE_2}</p>
             </div>
-          </div>
+          </div> */}
           
           <div className="mt-8 text-center">
             {/* <p className="text-muted-foreground">{env.COMPANY_EMAIL}</p>
