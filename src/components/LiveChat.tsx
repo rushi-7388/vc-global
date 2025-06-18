@@ -108,18 +108,35 @@ export const LiveChat = () => {
 
     setIsLoading(true);
     try {
-      const { error } = await supabase
+      // Store user message
+      const { error: userMessageError } = await supabase
         .from('chat_messages')
         .insert([{
           message: newMessage,
-          sender_name: 'Guest User',
-          sender_email: 'guest@example.com',
+          sender_name: 'You',
+          sender_email: 'user@example.com',
           is_admin: false
         }]);
 
-      if (error) throw error;
+      if (userMessageError) throw userMessageError;
 
+      const userMessageText = newMessage;
       setNewMessage('');
+
+      // Call AI response function
+      console.log('Calling AI response function with message:', userMessageText);
+      
+      const { data: aiResponseData, error: aiError } = await supabase.functions.invoke('chat-ai-response', {
+        body: { userMessage: userMessageText }
+      });
+
+      if (aiError) {
+        console.error('AI response error:', aiError);
+        throw new Error('Failed to get AI response');
+      }
+
+      console.log('AI response received:', aiResponseData);
+
     } catch (error) {
       console.error('Error sending message:', error);
       toast({
@@ -153,7 +170,7 @@ export const LiveChat = () => {
       {isOpen && (
         <Card className="fixed bottom-20 right-4 w-80 h-96 z-50 shadow-2xl border-2">
           <CardHeader className="flex flex-row items-center justify-between p-4 bg-primary text-primary-foreground rounded-t-lg">
-            <CardTitle className="text-lg">Live Chat Support</CardTitle>
+            <CardTitle className="text-lg">AI Support Chat</CardTitle>
             <Button variant="ghost" size="sm" onClick={toggleChat} className="text-primary-foreground hover:bg-primary-foreground/20">
               <X className="h-4 w-4" />
             </Button>
@@ -166,7 +183,7 @@ export const LiveChat = () => {
                   <div className="text-center py-8">
                     <MessageSquare className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
                     <p className="text-sm text-muted-foreground">
-                      Welcome! Start a conversation with our support team.
+                      Welcome! Ask me anything about V&C Global's products and services.
                     </p>
                   </div>
                 ) : (
@@ -184,7 +201,7 @@ export const LiveChat = () => {
                       >
                         <p className="break-words">{message.message}</p>
                         <p className="text-xs opacity-70 mt-1">
-                          {message.is_admin ? 'Support' : 'You'} • 
+                          {message.is_admin ? 'AI Support' : 'You'} • 
                           {new Date(message.created_at).toLocaleTimeString([], { 
                             hour: '2-digit', 
                             minute: '2-digit' 
@@ -201,7 +218,7 @@ export const LiveChat = () => {
             <div className="p-4 border-t bg-muted/30">
               <div className="flex gap-2">
                 <Input
-                  placeholder="Type your message..."
+                  placeholder="Ask about our products and services..."
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
@@ -216,7 +233,7 @@ export const LiveChat = () => {
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                Press Enter to send
+                {isLoading ? 'AI is thinking...' : 'Press Enter to send'}
               </p>
             </div>
           </CardContent>
