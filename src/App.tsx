@@ -77,11 +77,11 @@ const App = () => {
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/quote" element={<Quote />} />
                   <Route path="/reach-out" element={<ReachOut />} />
-                  <Route path="/consultation" element={<Consultation />} />
+                  {/* <Route path="/consultation" element={<Consultation />} /> */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
-              <LiveChat />
+              {/* <LiveChat /> */}
             </BrowserRouter>
           </TooltipProvider>
         </AuthProvider>

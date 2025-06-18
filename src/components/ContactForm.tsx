@@ -1,9 +1,14 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Phone, Mail } from "lucide-react";
@@ -15,7 +20,7 @@ export const ContactForm = () => {
     email: "",
     phone: "",
     password: "",
-    message: ""
+    message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -25,16 +30,14 @@ export const ContactForm = () => {
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase
-        .from('contact_submissions')
-        .insert({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          password: formData.password,
-          message: formData.message,
-          submission_type: 'contact'
-        });
+      const { error } = await supabase.from("contact_submissions").insert({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        message: formData.message,
+        submission_type: "contact",
+      });
 
       if (error) throw error;
 
@@ -48,13 +51,14 @@ export const ContactForm = () => {
         email: "",
         phone: "",
         password: "",
-        message: ""
+        message: "",
       });
     } catch (error) {
-      console.error('Error submitting contact form:', error);
+      console.error("Error submitting contact form:", error);
       toast({
         title: "Error",
-        description: "There was an error sending your message. Please try again.",
+        description:
+          "There was an error sending your message. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -62,10 +66,12 @@ export const ContactForm = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
@@ -164,11 +170,13 @@ export const ContactForm = () => {
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <Mail className="h-5 w-5 text-primary" />
-              <div>
-                <p className="font-medium">Email</p>
-                <p className="text-muted-foreground">{env.COMPANY_EMAIL}</p>
-              </div>
+              <Mail className="w-5 text-primary font-medium" />
+              <a
+                href={`mailto:${env.COMPANY_EMAIL}`}
+                className="hover:text-primary transition-colors"
+              >
+                {env.COMPANY_EMAIL}
+              </a>
             </div>
           </CardContent>
         </Card>
@@ -180,17 +188,17 @@ export const ContactForm = () => {
           <CardContent>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span>Monday - Friday</span>
-                <span>9:00 AM - 6:00 PM</span>
+                <span>Monday - Sunday</span>
+                <span>24/7 OPEN</span>
               </div>
-              <div className="flex justify-between">
+              {/* <div className="flex justify-between">
                 <span>Saturday</span>
                 <span>9:00 AM - 4:00 PM</span>
               </div>
               <div className="flex justify-between">
                 <span>Sunday</span>
                 <span>Closed</span>
-              </div>
+              </div> */}
             </div>
           </CardContent>
         </Card>

@@ -1,4 +1,4 @@
-
+  
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -36,7 +36,7 @@
     --ring: 45 100% 60%; /* Yellow ring */
 
     --radius: 0.5rem;
-
+    
     --sidebar-background: 220 15% 9%;
     --sidebar-foreground: 220 10% 95%;
     --sidebar-primary: 45 100% 60%; /* Yellow sidebar primary */

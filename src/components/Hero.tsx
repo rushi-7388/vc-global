@@ -13,7 +13,7 @@ export const Hero = () => {
         <div className="max-w-4xl mx-auto text-center">
           <div className="flex items-center justify-center mb-6">
             <img 
-              src="/uploads/pic1.png" 
+              src="/logo.png" 
               alt="V&C Global Logo" 
               className="h-16 w-16 mr-4"
             />
@@ -51,7 +51,7 @@ export const Hero = () => {
             </Link>
           </div>
 
-          <div className="mb-12">
+          {/* <div className="mb-12">
             <p className="text-muted-foreground mb-4 text-lg">Ready to transform your space?</p>
             <Link to="/consultation">
               <Button 
@@ -62,7 +62,7 @@ export const Hero = () => {
                 Schedule Consultation
               </Button>
             </Link>
-          </div>
+          </div> */}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
             <div className="bg-card backdrop-blur-sm rounded-lg p-6 border border-border">
@@ -76,8 +76,8 @@ export const Hero = () => {
           </div>
           
           <div className="mt-8 text-center">
-            <p className="text-muted-foreground">{env.COMPANY_EMAIL}</p>
-            <p className="text-muted-foreground">{env.COMPANY_INSTAGRAM}</p>
+            {/* <p className="text-muted-foreground">{env.COMPANY_EMAIL}</p>
+            <p className="text-muted-foreground">{env.COMPANY_INSTAGRAM}</p> */}
           </div>
         </div>
       </div>
