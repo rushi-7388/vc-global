@@ -1,4 +1,3 @@
-
 import { Award, Users, Globe, Truck } from "lucide-react";
 
 export const AboutSection = () => {
@@ -6,23 +5,27 @@ export const AboutSection = () => {
     {
       icon: Award,
       title: "Premium Quality",
-      description: "Handpicked materials from the finest quarries worldwide, ensuring exceptional quality and durability."
+      description:
+        "Handpicked materials from the finest quarries worldwide, ensuring exceptional quality and durability.",
     },
     {
       icon: Users,
       title: "Expert Team",
-      description: "Our skilled craftsmen and designers bring decades of experience to every project."
+      description:
+        "Our skilled craftsmen and designers bring decades of experience to every project.",
     },
     {
       icon: Globe,
       title: "Global Sourcing",
-      description: "Direct imports from Italy, Turkey, and other renowned marble and tile regions."
+      description:
+        "Direct imports from Italy, Turkey, and other renowned marble and tile regions.",
     },
     {
       icon: Truck,
       title: "Fast Delivery",
-      description: "Efficient logistics network ensuring timely delivery across India and beyond."
-    }
+      description:
+        "Efficient logistics network ensuring timely delivery across India and beyond.",
+    },
   ];
 
   return (
@@ -33,23 +36,25 @@ export const AboutSection = () => {
             Why Choose V&C Global?
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            With over 35 years of experience, we've built our reputation on quality, 
-            reliability, and exceptional customer service.
+            Excellence isn’t a promise — it’s our standard. When you choose us,
+            you choose precision, integrity, and a partner committed to your
+            success.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
-            <div key={index} className="text-center p-6 rounded-lg hover:shadow-lg transition-shadow bg-card border border-border">
+            <div
+              key={index}
+              className="text-center p-6 rounded-lg hover:shadow-lg transition-shadow bg-card border border-border"
+            >
               <div className="bg-primary/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <feature.icon className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-xl font-semibold text-primary mb-3">
                 {feature.title}
               </h3>
-              <p className="text-muted-foreground">
-                {feature.description}
-              </p>
+              <p className="text-muted-foreground">{feature.description}</p>
             </div>
           ))}
         </div>
@@ -61,30 +66,39 @@ export const AboutSection = () => {
                 Our Story
               </h3>
               <p className="text-muted-foreground mb-4">
-                Founded in 1985, V&C Global started as a small family business with a vision 
-                to bring the world's finest marbles and tiles to Indian homes and businesses. 
-                Today, we're proud to be one of India's leading importers and suppliers of 
-                premium stone materials.
+                From late-night college discussions to early morning factory
+                visits, our journey began with a shared purpose — to build
+                something meaningful from the ground up. As best friends turned
+                business partners, we traveled across India, connecting with
+                manufacturers, quarry owners, and industry experts, learning not
+                just the trade, but the trust it carries.
               </p>
               <p className="text-muted-foreground mb-6">
-                Our commitment to quality and customer satisfaction has helped us serve over 
-                10,000 satisfied customers across 25+ countries, making us a trusted name in 
-                the industry.
+                V&C Global was born out of that passion — to represent India’s
+                finest to the world with honesty, precision, and heart. Today,
+                every deal we make is more than business; it’s a reflection of
+                our values, our bond, and our unwavering commitment to quality.
               </p>
-              <div className="grid grid-cols-3 gap-4 text-center">
+              {/* <div className="grid grid-cols-3 gap-4 text-center">
                 <div>
                   <div className="text-3xl font-bold text-primary">35+</div>
-                  <div className="text-sm text-muted-foreground">Years Experience</div>
+                  <div className="text-sm text-muted-foreground">
+                    Years Experience
+                  </div>
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-primary">10K+</div>
-                  <div className="text-sm text-muted-foreground">Happy Customers</div>
+                  <div className="text-sm text-muted-foreground">
+                    Happy Customers
+                  </div>
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-primary">25+</div>
-                  <div className="text-sm text-muted-foreground">Countries Served</div>
+                  <div className="text-sm text-muted-foreground">
+                    Countries Served
+                  </div>
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="relative">
               <img

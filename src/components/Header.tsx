@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
@@ -24,11 +23,21 @@ export const Header = () => {
     <header className="bg-white shadow-sm border-b sticky top-0 z-40">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
+
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
+          {/* <Link to="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">V</span>
             </div>
+            <span className="text-xl font-bold text-gray-900">V&C Global</span>
+          </Link> */}
+
+          <Link to="/" className="flex items-center space-x-2">
+            <img
+              src="/logo.png"
+              alt="V&C Global Logo"
+              className="w-10 h-10 object-contain"
+            />
             <span className="text-xl font-bold text-gray-900">V&C Global</span>
           </Link>
 
@@ -51,10 +60,10 @@ export const Header = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <RealtimeNotifications />
+            {/* <RealtimeNotifications />
             <Link to="/consultation">
               <Button>Schedule Consultation</Button>
-            </Link>
+            </Link> */}
           </div>
 
           {/* Mobile Menu Button */}
@@ -65,7 +74,11 @@ export const Header = () => {
               size="sm"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {isMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
             </Button>
           </div>
         </div>
