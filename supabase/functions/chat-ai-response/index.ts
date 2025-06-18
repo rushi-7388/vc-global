@@ -61,7 +61,41 @@ serve(async (req) => {
     if (!response.ok) {
       const errorData = await response.text();
       console.error('OpenAI API error:', errorData);
-      throw new Error(`OpenAI API error: ${response.status}`);
+      
+      let aiResponse = "I'm sorry, I'm currently experiencing technical difficulties. Please try again later or contact our support team directly.";
+      
+      // Handle specific error cases
+      if (response.status === 429) {
+        const errorObj = JSON.parse(errorData);
+        if (errorObj.error?.code === 'insufficient_quota') {
+          aiResponse = "I apologize, but our AI service is temporarily unavailable due to quota limits. Please contact our support team directly at support@vcglobal.com for immediate assistance.";
+        } else {
+          aiResponse = "I'm currently experiencing high traffic. Please wait a moment and try again.";
+        }
+      } else if (response.status === 401) {
+        aiResponse = "I'm sorry, there's an authentication issue with our AI service. Please contact our support team for assistance.";
+      }
+
+      // Store fallback response in database
+      const { error: insertError } = await supabase
+        .from('chat_messages')
+        .insert([{
+          message: aiResponse,
+          sender_name: 'AI Support',
+          sender_email: 'support@vcglobal.com',
+          is_admin: true
+        }]);
+
+      if (insertError) {
+        console.error('Error storing fallback response:', insertError);
+      }
+
+      return new Response(JSON.stringify({ 
+        success: true, 
+        response: aiResponse 
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     const data = await response.json();
@@ -95,6 +129,27 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in chat-ai-response function:', error);
+    
+    // Store error response in database as fallback
+    try {
+      const supabaseUrl = Deno.env.get('SUPABASE_URL');
+      const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY');
+      
+      if (supabaseUrl && supabaseKey) {
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        await supabase
+          .from('chat_messages')
+          .insert([{
+            message: "I apologize, but I'm experiencing technical difficulties. Please contact our support team directly for assistance.",
+            sender_name: 'AI Support',
+            sender_email: 'support@vcglobal.com',
+            is_admin: true
+          }]);
+      }
+    } catch (fallbackError) {
+      console.error('Error storing fallback message:', fallbackError);
+    }
+
     return new Response(JSON.stringify({ 
       error: error.message 
     }), {

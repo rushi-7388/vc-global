@@ -37,6 +37,9 @@ export const ChatMessageList = ({ messages }: ChatMessageListProps) => {
             <p className="text-sm text-muted-foreground">
               Welcome! Ask me anything about V&C Global's products and services.
             </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              You can edit or delete your messages by hovering over them.
+            </p>
           </div>
         ) : (
           messages.map((message) => (

@@ -75,6 +75,38 @@ export const useLiveChat = (isOpen: boolean) => {
           }
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'chat_messages'
+        },
+        (payload) => {
+          console.log('Chat message updated:', payload);
+          const updatedMessage = payload.new as ChatMessage;
+          setMessages(prev => 
+            prev.map(msg => 
+              msg.id === updatedMessage.id ? updatedMessage : msg
+            )
+          );
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'chat_messages'
+        },
+        (payload) => {
+          console.log('Chat message deleted:', payload);
+          const deletedMessage = payload.old as ChatMessage;
+          setMessages(prev => 
+            prev.filter(msg => msg.id !== deletedMessage.id)
+          );
+        }
+      )
       .subscribe();
 
     console.log('Chat realtime subscription established');
