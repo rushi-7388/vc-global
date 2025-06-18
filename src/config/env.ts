@@ -19,8 +19,8 @@ export const env = {
   COMPANY_INSTAGRAM: import.meta.env.VITE_COMPANY_INSTAGRAM || '@vcglobal_',
   
   // Authentication Configuration
-  GOOGLE_CLIENT_ID: import.meta.env.VITE_GOOGLE_CLIENT_ID || '',
-  GOOGLE_CLIENT_SECRET: import.meta.env.VITE_GOOGLE_CLIENT_SECRET || '',
+  // GOOGLE_CLIENT_ID: import.meta.env.VITE_GOOGLE_CLIENT_ID || '',
+  // GOOGLE_CLIENT_SECRET: import.meta.env.VITE_GOOGLE_CLIENT_SECRET || '',
   
   // Feature Flags
   ENABLE_ANALYTICS: import.meta.env.VITE_ENABLE_ANALYTICS === 'true',
