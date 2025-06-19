@@ -110,7 +110,7 @@ export const Header = () => {
         </div>
       </header>
 
-      <LiveChat isOpen={showChat} onClose={() => setShowChat(false)} />
+      {showChat && <LiveChat />}
     </>
   );
 };
