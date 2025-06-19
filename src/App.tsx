@@ -1,25 +1,26 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/components/AuthProvider";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { preloadCriticalResources } from "@/utils/performanceOptimizations";
 import { lazy, Suspense, useEffect } from "react";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { LiveChat } from "@/components/LiveChat";
 
 // Lazy load components for code splitting
 const Index = lazy(() => import("./pages/Index"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Products = lazy(() => import("./pages/Products"));
+const CategoryProducts = lazy(() => import("./pages/CategoryProducts"));
 const About = lazy(() => import("./pages/About"));
 const Services = lazy(() => import("./pages/Services"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Quote = lazy(() => import("./pages/Quote"));
 const ReachOut = lazy(() => import("./pages/ReachOut"));
-const Consultation = lazy(() => import("./pages/Consultation"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Enhanced QueryClient for extreme high-load scenarios
@@ -69,19 +70,78 @@ const App = () => {
             <BrowserRouter>
               <Suspense fallback={<LoadingSpinner size="lg" text="Loading page..." />}>
                 <Routes>
+                  {/* Public routes */}
                   <Route path="/" element={<Index />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/services" element={<Services />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/quote" element={<Quote />} />
-                  <Route path="/reach-out" element={<ReachOut />} />
-                  {/* <Route path="/consultation" element={<Consultation />} /> */}
+                  <Route 
+                    path="/auth" 
+                    element={
+                      <ProtectedRoute requireAuth={false}>
+                        <Auth />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  
+                  {/* Protected routes */}
+                  <Route 
+                    path="/products" 
+                    element={
+                      <ProtectedRoute>
+                        <Products />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/products/:categoryName" 
+                    element={
+                      <ProtectedRoute>
+                        <CategoryProducts />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/about" 
+                    element={
+                      <ProtectedRoute>
+                        <About />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/services" 
+                    element={
+                      <ProtectedRoute>
+                        <Services />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/contact" 
+                    element={
+                      <ProtectedRoute>
+                        <Contact />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/quote" 
+                    element={
+                      <ProtectedRoute>
+                        <Quote />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/reach-out" 
+                    element={
+                      <ProtectedRoute>
+                        <ReachOut />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
-              {/* <LiveChat /> */}
             </BrowserRouter>
           </TooltipProvider>
         </AuthProvider>

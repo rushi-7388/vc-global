@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Ruler, Layers, Crown, ShoppingCart } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface Product {
   id: string;
@@ -97,10 +98,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             </div>
           )}
           
-          <Button size="sm" className="bg-primary hover:bg-primary/90">
-            <ShoppingCart className="h-4 w-4 mr-2" />
-            Quote
-          </Button>
+          <Link to="/quote">
+            <Button size="sm" className="bg-primary hover:bg-primary/90">
+              <ShoppingCart className="h-4 w-4 mr-2" />
+              Quote
+            </Button>
+          </Link>
         </div>
         
         {product.finish_type && (
