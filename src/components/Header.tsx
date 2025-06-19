@@ -20,8 +20,8 @@ export const Header = () => {
     { name: "About", path: "/about" },
     { name: "Services", path: "/services" },
     { name: "Contact", path: "/contact" },
-    { name: "Get Quote", path: "/quote" },
-    { name: "Reach Out", path: "/reach-out" },
+    // { name: "Get Quote", path: "/quote" },
+    // { name: "Reach Out", path: "/reach-out" },
   ];
 
   const handleNavClick = (path: string) => {
@@ -62,15 +62,15 @@ export const Header = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-2">
-            <RealtimeNotifications />
-            <RealtimeQuoteNotifications />
-            <Button
+            {/* <RealtimeNotifications />
+            <RealtimeQuoteNotifications /> */}
+            {/* <Button
               variant="outline"
               size="icon"
               onClick={() => setShowChat(true)}
             >
               <MessageCircle className="h-4 w-4" />
-            </Button>
+            </Button> */}
             <AuthButton />
           </div>
 

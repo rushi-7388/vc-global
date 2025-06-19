@@ -84,27 +84,27 @@ export const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Our Products</h4>
             <ul className="space-y-2 text-muted-foreground">
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
+                <a href="/products" className="hover:text-primary transition-colors">
                   Italian Marble
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
+                <a href="/products" className="hover:text-primary transition-colors">
                   Designer Tiles
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
+                <a href="/products" className="hover:text-primary transition-colors">
                   Natural Stone
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Premium Ceramics
+                <a href="/products" className="hover:text-primary transition-colors">
+                  Sanitary Products 
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
+                <a href="/products" className="hover:text-primary transition-colors">
                   Granite
                 </a>
               </li>
