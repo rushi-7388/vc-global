@@ -13,19 +13,20 @@ export const useOptimizedProductsQuery = (selectedCategory?: string | null) => {
       let query = supabase
         .from('products')
         .select(`
-          id,
-          name,
-          description,
-          price_per_sqft,
-          origin_country,
-          material_type,
-          size_options,
-          finish_type,
-          thickness_mm,
-          image_urls,
-          is_premium,
-          category:categories(name, description)
-        `)
+            id,
+            name,
+            description,
+            price_per_sqft,
+            origin_country,
+            material_type,
+            size_options,
+            finish_type,
+            thickness_mm,
+            image_urls,
+            is_premium,
+            in_stock, 
+            category:categories(name, description)
+          `)
         .eq('in_stock', true);
 
       // Limit results for slow connections
