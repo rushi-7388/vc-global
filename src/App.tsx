@@ -15,6 +15,7 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 const Index = lazy(() => import("./pages/Index"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Products = lazy(() => import("./pages/Products"));
+const AdminProducts = lazy(() => import("./pages/AdminProducts"));
 const CategoryProducts = lazy(() => import("./pages/CategoryProducts"));
 const About = lazy(() => import("./pages/About"));
 const Services = lazy(() => import("./pages/Services"));
@@ -87,6 +88,14 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <Products />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin/products" 
+                    element={
+                      <ProtectedRoute>
+                        <AdminProducts />
                       </ProtectedRoute>
                     } 
                   />

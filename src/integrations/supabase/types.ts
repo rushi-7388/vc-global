@@ -9,6 +9,30 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_users: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          role: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          role?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          role?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string | null
@@ -190,6 +214,7 @@ export type Database = {
         Row: {
           category_id: string | null
           created_at: string | null
+          created_by: string | null
           description: string | null
           finish_type: string | null
           id: string
@@ -203,10 +228,12 @@ export type Database = {
           size_options: string[] | null
           thickness_mm: number | null
           updated_at: string | null
+          updated_by: string | null
         }
         Insert: {
           category_id?: string | null
           created_at?: string | null
+          created_by?: string | null
           description?: string | null
           finish_type?: string | null
           id?: string
@@ -220,10 +247,12 @@ export type Database = {
           size_options?: string[] | null
           thickness_mm?: number | null
           updated_at?: string | null
+          updated_by?: string | null
         }
         Update: {
           category_id?: string | null
           created_at?: string | null
+          created_by?: string | null
           description?: string | null
           finish_type?: string | null
           id?: string
@@ -237,6 +266,7 @@ export type Database = {
           size_options?: string[] | null
           thickness_mm?: number | null
           updated_at?: string | null
+          updated_by?: string | null
         }
         Relationships: [
           {

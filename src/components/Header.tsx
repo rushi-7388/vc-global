@@ -1,12 +1,15 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { RealtimeNotifications } from "@/components/RealtimeNotifications";
+import { useAdminCheck } from "@/hooks/useAdminCheck";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { data: isAdmin } = useAdminCheck();
 
   const navItems = [
     { name: "Home", path: "/" },
@@ -17,20 +20,17 @@ export const Header = () => {
     { name: "Quote", path: "/quote" },
   ];
 
+  // Add admin link if user is admin
+  if (isAdmin) {
+    navItems.push({ name: "Manage Products", path: "/admin/products" });
+  }
+
   const isActive = (path: string) => location.pathname === path;
 
   return (
     <header className="bg-white shadow-sm border-b sticky top-0 z-40">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-
-          {/* Logo */}
-          {/* <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">V</span>
-            </div>
-            <span className="text-xl font-bold text-gray-900">V&C Global</span>
-          </Link> */}
 
           <Link to="/" className="flex items-center space-x-2">
             <img
@@ -60,10 +60,7 @@ export const Header = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            {/* <RealtimeNotifications />
-            <Link to="/consultation">
-              <Button>Schedule Consultation</Button>
-            </Link> */}
+            <RealtimeNotifications />
           </div>
 
           {/* Mobile Menu Button */}
@@ -99,9 +96,6 @@ export const Header = () => {
                   {item.name}
                 </Link>
               ))}
-              <Link to="/consultation" onClick={() => setIsMenuOpen(false)}>
-                <Button className="w-full">Schedule Consultation</Button>
-              </Link>
             </nav>
           </div>
         )}
