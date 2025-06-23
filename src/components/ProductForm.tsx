@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +10,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCategoriesQuery } from "@/hooks/useCategoriesQuery";
 import { useToast } from "@/hooks/use-toast";
 import { X } from "lucide-react";
+import { FileUpload } from "./FileUpload";
+import { UploadedFile } from "@/utils/fileUpload";
 
 interface ProductFormProps {
   product?: any;
@@ -27,17 +28,27 @@ export const ProductForm = ({ product, onClose }: ProductFormProps) => {
     size_options: '',
     finish_type: '',
     thickness_mm: '',
-    image_urls: '',
     is_premium: false,
     in_stock: true,
     category_id: ''
   });
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { data: categories } = useCategoriesQuery();
   const { toast } = useToast();
 
   useEffect(() => {
-    if (product) {
+    if (product && categories && categories.length > 0) {
+      // Try to find the correct category id
+      let categoryId = product.category_id;
+      if (!categoryId && product.category && product.category.id) {
+        categoryId = product.category.id;
+      }
+      // If still not found, try to match by name (for legacy data)
+      if (!categoryId && product.category && product.category.name) {
+        const match = categories.find(cat => cat.name === product.category.name);
+        if (match) categoryId = match.id;
+      }
       setFormData({
         name: product.name || '',
         description: product.description || '',
@@ -47,13 +58,23 @@ export const ProductForm = ({ product, onClose }: ProductFormProps) => {
         size_options: product.size_options?.join(', ') || '',
         finish_type: product.finish_type || '',
         thickness_mm: product.thickness_mm?.toString() || '',
-        image_urls: product.image_urls?.join(', ') || '',
         is_premium: product.is_premium || false,
         in_stock: product.in_stock !== false,
-        category_id: product.category_id || ''
+        category_id: categoryId || ''
       });
+
+      // Convert existing image_urls to UploadedFile format for editing
+      if (product.image_urls && product.image_urls.length > 0) {
+        const existingFiles: UploadedFile[] = product.image_urls.map((url: string, index: number) => ({
+          name: `existing-image-${index}`,
+          url: url,
+          size: 0,
+          type: 'image/jpeg'
+        }));
+        setUploadedFiles(existingFiles);
+      }
     }
-  }, [product]);
+  }, [product, categories]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,6 +83,15 @@ export const ProductForm = ({ product, onClose }: ProductFormProps) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      // Validate that at least one image is uploaded
+      if (uploadedFiles.length === 0) {
+        throw new Error('Please upload at least one product image');
+      }
+
       const productData = {
         name: formData.name,
         description: formData.description || null,
@@ -71,12 +101,13 @@ export const ProductForm = ({ product, onClose }: ProductFormProps) => {
         size_options: formData.size_options ? formData.size_options.split(',').map(s => s.trim()) : null,
         finish_type: formData.finish_type || null,
         thickness_mm: formData.thickness_mm ? parseInt(formData.thickness_mm) : null,
-        image_urls: formData.image_urls ? formData.image_urls.split(',').map(s => s.trim()) : null,
+        image_urls: uploadedFiles.map(file => file.url), // Store URLs for backward compatibility
+        image_files: uploadedFiles.map(file => file.name), // Store file names for new system
         is_premium: formData.is_premium,
         in_stock: formData.in_stock,
         category_id: formData.category_id || null,
-        created_by: user?.id,
-        updated_by: user?.id
+        created_by: user.id,
+        updated_by: user.id
       };
 
       let error;
@@ -93,7 +124,18 @@ export const ProductForm = ({ product, onClose }: ProductFormProps) => {
         error = insertError;
       }
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database error:', error);
+        
+        // Handle specific policy errors
+        if (error.code === '42P17') {
+          throw new Error('Database policy error. Please contact support.');
+        } else if (error.code === '42501') {
+          throw new Error('Permission denied. You may not have admin access.');
+        } else {
+          throw error;
+        }
+      }
 
       toast({
         title: "Success",
@@ -101,16 +143,20 @@ export const ProductForm = ({ product, onClose }: ProductFormProps) => {
       });
       
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving product:', error);
       toast({
         title: "Error",
-        description: `Failed to ${product ? 'update' : 'create'} product. Please try again.`,
+        description: error.message || `Failed to ${product ? 'update' : 'create'} product. Please try again.`,
         variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleFilesUploaded = (files: UploadedFile[]) => {
+    setUploadedFiles(files);
   };
 
   return (
@@ -136,7 +182,10 @@ export const ProductForm = ({ product, onClose }: ProductFormProps) => {
 
             <div className="space-y-2">
               <Label htmlFor="category">Category</Label>
-              <Select value={formData.category_id} onValueChange={(value) => setFormData({ ...formData, category_id: value })}>
+              <Select 
+                value={formData.category_id} 
+                onValueChange={(value) => setFormData({ ...formData, category_id: value })}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
@@ -219,16 +268,12 @@ export const ProductForm = ({ product, onClose }: ProductFormProps) => {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="images">Image URLs (comma separated)</Label>
-            <Textarea
-              id="images"
-              value={formData.image_urls}
-              onChange={(e) => setFormData({ ...formData, image_urls: e.target.value })}
-              rows={2}
-              placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
-            />
-          </div>
+          {/* File Upload Component */}
+          <FileUpload
+            onFilesUploaded={handleFilesUploaded}
+            existingFiles={uploadedFiles}
+            maxFiles={5}
+          />
 
           <div className="flex space-x-6">
             <div className="flex items-center space-x-2">

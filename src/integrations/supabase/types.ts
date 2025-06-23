@@ -219,6 +219,7 @@ export type Database = {
           finish_type: string | null
           id: string
           image_urls: string[] | null
+          image_files: string[] | null
           in_stock: boolean | null
           is_premium: boolean | null
           material_type: string | null
@@ -238,6 +239,7 @@ export type Database = {
           finish_type?: string | null
           id?: string
           image_urls?: string[] | null
+          image_files?: string[] | null
           in_stock?: boolean | null
           is_premium?: boolean | null
           material_type?: string | null
@@ -257,6 +259,7 @@ export type Database = {
           finish_type?: string | null
           id?: string
           image_urls?: string[] | null
+          image_files?: string[] | null
           in_stock?: boolean | null
           is_premium?: boolean | null
           material_type?: string | null
@@ -385,6 +388,10 @@ export type Database = {
     }
   }
 }
+
+export type Product = Database["public"]["Tables"]["products"]["Row"] & {
+  category: Database["public"]["Tables"]["categories"]["Row"] | null;
+};
 
 type DefaultSchema = Database[Extract<keyof Database, "public">]
 
