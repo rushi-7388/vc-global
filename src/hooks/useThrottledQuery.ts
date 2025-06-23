@@ -1,4 +1,3 @@
-
 import { useQuery, UseQueryOptions, QueryFunction, QueryKey } from "@tanstack/react-query";
 import { createThrottledRequest } from "@/utils/performanceOptimizations";
 import { useMemo } from "react";

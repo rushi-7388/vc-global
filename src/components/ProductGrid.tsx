@@ -1,23 +1,5 @@
-
 import { ProductCard } from "@/components/ProductCard";
-
-interface Product {
-  id: string;
-  name: string;
-  description: string | null;
-  price_per_sqft: number | null;
-  origin_country: string | null;
-  material_type: string | null;
-  size_options: string[] | null;
-  finish_type: string | null;
-  thickness_mm: number | null;
-  image_urls: string[] | null;
-  is_premium: boolean | null;
-  category: {
-    name: string;
-    description: string | null;
-  } | null;
-}
+import { Product } from "@/integrations/supabase/types";
 
 interface ProductGridProps {
   products?: Product[];

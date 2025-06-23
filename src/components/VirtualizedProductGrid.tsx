@@ -1,4 +1,3 @@
-
 import { FixedSizeGrid as Grid } from 'react-window';
 import { OptimizedProductCard } from '@/components/OptimizedProductCard';
 import { useCallback } from 'react';

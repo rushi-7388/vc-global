@@ -1,4 +1,3 @@
-
 // Service Worker for caching and offline support
 const CACHE_NAME = 'vc-global-v1';
 const STATIC_CACHE = 'vc-global-static-v1';
