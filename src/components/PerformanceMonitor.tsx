@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { monitorMemoryUsage } from '@/utils/performanceOptimizations';
 

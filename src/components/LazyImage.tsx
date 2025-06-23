@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { createIntersectionObserver, getOptimalImageQuality } from '@/utils/performanceOptimizations';
 import { cn } from '@/lib/utils';
