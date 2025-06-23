@@ -1,18 +1,19 @@
-
-import { useEffect, useState } from "react";
-import { Navigate, useLocation } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
-import type { User } from "@supabase/supabase-js";
+import { ReactNode, useEffect, useState } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useUserBlocking } from '@/hooks/useUserBlocking';
+import { LoadingSpinner } from './LoadingSpinner';
+import { BlockedUserMessage } from './BlockedUserMessage';
+import type { User } from '@supabase/supabase-js';
 
 interface ProtectedRouteProps {
-  children: React.ReactNode;
-  requireAuth?: boolean;
+  children: ReactNode;
 }
 
-export const ProtectedRoute = ({ children, requireAuth = true }: ProtectedRouteProps) => {
+export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const { isBlocked, loading: blockingLoading } = useUserBlocking();
   const location = useLocation();
 
   useEffect(() => {
@@ -36,23 +37,26 @@ export const ProtectedRoute = ({ children, requireAuth = true }: ProtectedRouteP
     return () => subscription.unsubscribe();
   }, []);
 
-  if (loading) {
+  // Show loading while checking authentication and blocking status
+  if (loading || blockingLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner size="lg" text="Checking authentication..." />
+      <div className="flex items-center justify-center min-h-screen">
+        <LoadingSpinner size="lg" text="Verifying access..." />
       </div>
     );
   }
 
-  // If authentication is required but user is not logged in
-  if (requireAuth && !user) {
-    return <Navigate to="/auth" state={{ from: location }} replace />;
+  // If user is not authenticated, redirect to auth page with intended destination
+  if (!user) {
+    const currentPath = location.pathname + location.search;
+    return <Navigate to={`/auth?redirectTo=${encodeURIComponent(currentPath)}`} replace />;
   }
 
-  // If user is logged in but trying to access auth page, redirect to home
-  if (!requireAuth && user && location.pathname === '/auth') {
-    return <Navigate to="/" replace />;
+  // If user is blocked, show blocked message
+  if (isBlocked) {
+    return <BlockedUserMessage />;
   }
 
+  // User is authenticated and not blocked, render children
   return <>{children}</>;
 };

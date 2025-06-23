@@ -1,7 +1,6 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { MapPin, Ruler, Layers, Crown, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -16,6 +15,7 @@ interface Product {
   finish_type: string | null;
   thickness_mm: number | null;
   image_urls: string[] | null;
+  image_files: string[] | null;
   is_premium: boolean | null;
   category: {
     name: string;
@@ -28,7 +28,25 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-  const imageUrl = product.image_urls?.[0] || "https://images.unsplash.com/photo-1615971677499-5467cbab01c0?q=80&w=500";
+  // Helper function to get the best available image URL
+  const getProductImageUrl = () => {
+    // First try image_urls (backward compatibility)
+    if (product.image_urls && product.image_urls.length > 0) {
+      return product.image_urls[0];
+    }
+    
+    // Then try image_files (new system)
+    if (product.image_files && product.image_files.length > 0) {
+      // Construct URL from storage bucket
+      const fileName = product.image_files[0];
+      return `${process.env.VITE_SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
+    }
+    
+    // Fallback to placeholder
+    return "https://images.unsplash.com/photo-1615971677499-5467cbab01c0?q=80&w=500";
+  };
+
+  const imageUrl = getProductImageUrl();
 
   return (
     <Card className="group hover:shadow-xl transition-all duration-300 overflow-hidden bg-card border-border">
@@ -53,67 +71,72 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         )}
       </div>
       
-      <CardContent className="p-6">
-        <h3 className="font-bold text-lg text-foreground mb-2 group-hover:text-primary transition-colors">
-          {product.name}
-        </h3>
-        
-        {product.description && (
-          <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-            {product.description}
-          </p>
-        )}
-        
-        <div className="space-y-2 mb-4">
-          {product.origin_country && (
-            <div className="flex items-center text-sm text-muted-foreground">
-              <MapPin className="h-4 w-4 mr-2 text-primary" />
-              Origin: {product.origin_country}
-            </div>
-          )}
-          
-          {product.thickness_mm && (
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Layers className="h-4 w-4 mr-2 text-primary" />
-              Thickness: {product.thickness_mm}mm
-            </div>
-          )}
-          
-          {product.size_options && product.size_options.length > 0 && (
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Ruler className="h-4 w-4 mr-2 text-primary" />
-              Sizes: {product.size_options.slice(0, 2).join(", ")}
-              {product.size_options.length > 2 && "..."}
-            </div>
-          )}
-        </div>
-        
-        <div className="flex items-center justify-between">
-          {product.price_per_sqft && (
-            <div>
-              <span className="text-2xl font-bold text-primary">
-                ₹{product.price_per_sqft}
-              </span>
-              <span className="text-sm text-muted-foreground ml-1">/sq ft</span>
-            </div>
-          )}
-          
-          <Link to="/quote">
-            <Button size="sm" className="bg-primary hover:bg-primary/90">
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Quote
-            </Button>
-          </Link>
-        </div>
-        
-        {product.finish_type && (
-          <div className="mt-3 pt-3 border-t border-border">
-            <span className="text-xs text-muted-foreground uppercase tracking-wide">
-              Finish: {product.finish_type}
-            </span>
+      <CardContent className="p-4">
+        <div className="space-y-3">
+          <div>
+            <h3 className="font-semibold text-lg line-clamp-2 group-hover:text-primary transition-colors">
+              {product.name}
+            </h3>
+            {product.description && (
+              <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                {product.description}
+              </p>
+            )}
           </div>
-        )}
+          
+          <div className="space-y-2">
+            {product.price_per_sqft && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Price per sq ft:</span>
+                <span className="font-semibold text-lg text-primary">
+                  ₹{product.price_per_sqft}
+                </span>
+              </div>
+            )}
+            
+            <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+              {product.origin_country && (
+                <div className="flex items-center">
+                  <MapPin className="h-3 w-3 mr-1" />
+                  <span className="truncate">{product.origin_country}</span>
+                </div>
+              )}
+              
+              {product.material_type && (
+                <div className="flex items-center">
+                  <Layers className="h-3 w-3 mr-1" />
+                  <span className="truncate">{product.material_type}</span>
+                </div>
+              )}
+              
+              {product.thickness_mm && (
+                <div className="flex items-center">
+                  <Ruler className="h-3 w-3 mr-1" />
+                  <span>{product.thickness_mm}mm</span>
+                </div>
+              )}
+              
+              {product.finish_type && (
+                <div className="flex items-center">
+                  <span className="truncate">{product.finish_type}</span>
+                </div>
+              )}
+            </div>
+            
+            {product.size_options && product.size_options.length > 0 && (
+              <div className="text-xs text-muted-foreground">
+                <span className="font-medium">Sizes: </span>
+                {product.size_options.join(', ')}
+              </div>
+            )}
+          </div>
+        </div>
       </CardContent>
+      <CardFooter className="p-4 bg-muted/20">
+        <Button asChild size="sm" className="w-full">
+          <Link to={`/product/${product.id}`}>View Details</Link>
+        </Button>
+      </CardFooter>
     </Card>
   );
 };

@@ -1,6 +1,7 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+
+const ADMIN_EMAIL = "myplayer4560@gmail.com"; // Your admin email
 
 export const useAdminCheck = () => {
   return useQuery({
@@ -10,14 +11,8 @@ export const useAdminCheck = () => {
       
       if (!user) return false;
       
-      const { data, error } = await supabase
-        .from('admin_users')
-        .select('id')
-        .eq('user_id', user.id)
-        .single();
-      
-      if (error) return false;
-      return !!data;
+      // Check if the user's email matches the admin email
+      return user.email === ADMIN_EMAIL;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });

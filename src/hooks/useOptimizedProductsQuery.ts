@@ -1,60 +1,57 @@
-
-import { useThrottledQuery } from "@/hooks/useThrottledQuery";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Product } from "@/integrations/supabase/types";
 
-export const useOptimizedProductsQuery = (selectedCategory?: string | null) => {
-  return useThrottledQuery({
-    queryKey: ['products', selectedCategory],
+export const useOptimizedProductsQuery = (
+  categoryName: string | null,
+  limit?: number
+) => {
+  return useQuery<Product[]>({
+    queryKey: ["products", { categoryName, limit }],
     queryFn: async () => {
-      // Use connection speed to determine query optimization with proper type checking
-      const connection = (navigator as any).connection;
-      const connectionSpeed = connection?.effectiveType || 'fast';
-      
+      console.log("🔍 Optimized Products Query Debug:", {
+        categoryName,
+        limit
+      });
+
       let query = supabase
-        .from('products')
-        .select(`
-            id,
-            name,
-            description,
-            price_per_sqft,
-            origin_country,
-            material_type,
-            size_options,
-            finish_type,
-            thickness_mm,
-            image_urls,
-            is_premium,
-            in_stock, 
-            category:categories(name, description)
-          `)
-        .eq('in_stock', true);
+        .from("products")
+        .select(
+          `
+          *,
+          category:categories!inner(*)
+        `
+        )
+        .eq("in_stock", true);
 
-      // Limit results for slow connections
-      if (connectionSpeed === 'slow-2g' || connectionSpeed === '2g') {
-        query = query.limit(20);
-      } else if (connectionSpeed === '3g') {
-        query = query.limit(50);
-      } else {
-        query = query.limit(100);
+      if (categoryName) {
+        console.log("🎯 Optimized Query - Filtering by category:", categoryName);
+        query = query.eq("categories.name", categoryName);
       }
 
-      if (selectedCategory) {
-        query = query.eq('category_id', selectedCategory);
+      if (limit) {
+        query = query.limit(limit);
       }
 
-      query = query
-        .order('is_premium', { ascending: false })
-        .order('created_at', { ascending: false });
+      const { data, error } = await query.order("created_at", {
+        ascending: false,
+      });
 
-      const { data, error } = await query;
-      
-      if (error) throw error;
+      console.log("📊 Optimized Query Results:", {
+        productsCount: data?.length || 0,
+        error: error?.message,
+        firstProductCategory: data?.[0]?.category?.name,
+        allCategories: data?.map(p => p.category?.name),
+        rawData: data?.[0] // Let's see the raw data structure
+      });
+
+      if (error) {
+        console.error("Products query error:", error);
+        throw error;
+      }
       return data || [];
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-    throttleDelay: 500, // Custom throttle delay
   });
 };

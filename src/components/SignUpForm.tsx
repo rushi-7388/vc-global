@@ -6,16 +6,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { LoadingSpinner } from "./LoadingSpinner"
 import { useToast } from "@/hooks/use-toast"
-import { signIn } from "@/lib/auth"
+import { supabase } from "@/integrations/supabase/client"
 
-interface LoginFormProps {
+interface SignUpFormProps {
   onSuccess?: () => void
-  onSwitchToSignUp?: () => void
+  onSwitchToSignIn?: () => void
 }
 
-export const LoginForm = ({ onSuccess, onSwitchToSignUp }: LoginFormProps) => {
+export const SignUpForm = ({ onSuccess, onSwitchToSignIn }: SignUpFormProps) => {
+  const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
@@ -25,20 +27,42 @@ export const LoginForm = ({ onSuccess, onSwitchToSignUp }: LoginFormProps) => {
     setLoading(true)
     setError(null)
 
+    // Validate passwords match
+    if (password !== confirmPassword) {
+      setError("Passwords do not match")
+      setLoading(false)
+      return
+    }
+
+    // Validate password strength
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long")
+      setLoading(false)
+      return
+    }
+
     try {
-      const { data, error } = await signIn(email, password)
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: name,
+          }
+        }
+      })
 
       if (error) {
         setError(error.message)
         toast({
-          title: "Login Failed",
+          title: "Sign Up Failed",
           description: error.message,
           variant: "destructive",
         })
       } else if (data?.user) {
         toast({
-          title: "Login Successful",
-          description: "Welcome back!",
+          title: "Account Created",
+          description: "Please check your email to verify your account",
         })
         onSuccess?.()
       }
@@ -46,7 +70,7 @@ export const LoginForm = ({ onSuccess, onSwitchToSignUp }: LoginFormProps) => {
       const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred"
       setError(errorMessage)
       toast({
-        title: "Login Failed",
+        title: "Sign Up Failed",
         description: errorMessage,
         variant: "destructive",
       })
@@ -56,25 +80,41 @@ export const LoginForm = ({ onSuccess, onSwitchToSignUp }: LoginFormProps) => {
   }
 
   return (
-    <div className="w-full max-w-sm sm:max-w-md mx-auto px-4 sm:px-0">
-      <Card className="w-full shadow-lg border-0 bg-black backdrop-blur-sm min-h-[500px] sm:min-h-[550px]">
-        <CardHeader className="space-y-4 pb-8 pt-8">
+    <div className="w-full max-w-sm sm:max-w-md mx-auto border-black px-4 sm:px-0">
+      <Card className="w-full shadow-lg border-black border-20 bg-background backdrop-blur-sm">
+        <CardHeader className="space-y-3 pb-6">
           <CardTitle className="text-2xl sm:text-3xl font-bold text-center bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-            Sign In
+            Create Account
           </CardTitle>
           <CardDescription className="text-center text-sm sm:text-base text-muted-foreground">
-            Enter your credentials to access your account
+            Enter your details to create a new account
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-8 px-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <CardContent className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
               <Alert variant="destructive" className="text-sm">
                 <AlertDescription className="text-center">{error}</AlertDescription>
               </Alert>
             )}
             
-            <div className="space-y-3">
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-sm font-medium">
+                Full Name
+              </Label>
+              <Input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your full name"
+                required
+                disabled={loading}
+                className="h-11 text-base transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+              />
+            </div>
+            
+            <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-medium">
                 Email Address
               </Label>
@@ -86,11 +126,11 @@ export const LoginForm = ({ onSuccess, onSwitchToSignUp }: LoginFormProps) => {
                 placeholder="Enter your email"
                 required
                 disabled={loading}
-                className="h-12 text-base transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                className="h-11 text-base transition-all duration-200 focus:ring-2 focus:ring-primary/20"
               />
             </div>
             
-            <div className="space-y-3">
+            <div className="space-y-2">
               <Label htmlFor="password" className="text-sm font-medium">
                 Password
               </Label>
@@ -102,37 +142,53 @@ export const LoginForm = ({ onSuccess, onSwitchToSignUp }: LoginFormProps) => {
                 placeholder="Enter your password"
                 required
                 disabled={loading}
-                className="h-12 text-base transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                className="h-11 text-base transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword" className="text-sm font-medium">
+                Confirm Password
+              </Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm your password"
+                required
+                disabled={loading}
+                className="h-11 text-base transition-all duration-200 focus:ring-2 focus:ring-primary/20"
               />
             </div>
             
             <Button 
               type="submit" 
-              className="w-full h-12 text-base font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] mt-4" 
+              className="w-full h-11 text-base font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]" 
               disabled={loading}
             >
               {loading ? (
                 <div className="flex items-center justify-center space-x-2">
                   <LoadingSpinner size="sm" />
-                  <span>Signing in...</span>
+                  <span>Creating account...</span>
                 </div>
               ) : (
-                "Sign In"
+                "Create Account"
               )}
             </Button>
           </form>
           
-          {onSwitchToSignUp && (
-            <div className="pt-6 border-t border-border/50">
+          {onSwitchToSignIn && (
+            <div className="pt-4 border-t border-border/50">
               <p className="text-center text-sm text-muted-foreground">
-                Don't have an account?{" "}
+                Already have an account?{" "}
                 <button
                   type="button"
-                  onClick={onSwitchToSignUp}
+                  onClick={onSwitchToSignIn}
                   className="text-primary hover:text-primary/80 font-medium transition-colors duration-200 hover:underline"
                   disabled={loading}
                 >
-                  Create account
+                  Sign in
                 </button>
               </p>
             </div>
@@ -141,4 +197,4 @@ export const LoginForm = ({ onSuccess, onSwitchToSignUp }: LoginFormProps) => {
       </Card>
     </div>
   )
-}
+} 

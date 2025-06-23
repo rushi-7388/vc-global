@@ -8,7 +8,23 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "supabase": "npx supabase",
+    "supabase:init": "npx supabase init",
+    "supabase:start": "npx supabase start",
+    "supabase:stop": "npx supabase stop",
+    "supabase:status": "npx supabase status",
+    "supabase:login": "npx supabase login",
+    "supabase:link": "npx supabase link",
+    "supabase:db:push": "npx supabase db push",
+    "supabase:db:pull": "npx supabase db pull",
+    "supabase:db:reset": "npx supabase db reset",
+    "supabase:db:diff": "npx supabase db diff",
+    "supabase:db:lint": "npx supabase db lint",
+    "supabase:migration:new": "npx supabase migration new",
+    "supabase:migration:list": "npx supabase migration list",
+    "supabase:migration:up": "npx supabase migration up",
+    "supabase:migration:repair": "npx supabase migration repair"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -41,6 +57,7 @@
     "@radix-ui/react-tooltip": "^1.1.4",
     "@supabase/supabase-js": "^2.50.0",
     "@tanstack/react-query": "^5.56.2",
+    "@tanstack/react-query-devtools": "^5.81.2",
     "@types/react-window": "^1.8.8",
     "better-auth": "^1.2.9",
     "class-variance-authority": "^0.7.1",
@@ -83,6 +100,7 @@
     "tailwindcss": "^3.4.11",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "vite": "^5.4.1",
+    "supabase": "^2.26.9"
   }
 }

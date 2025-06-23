@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
@@ -12,12 +11,26 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { PerformanceMonitor } from "@/components/PerformanceMonitor";
 import { useOptimizedProductsQuery } from "@/hooks/useOptimizedProductsQuery";
 import { useCategoriesQuery } from "@/hooks/useCategoriesQuery";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
+  console.log("🏠 Index Page Debug:", { selectedCategory });
+
   const { data: categories, isLoading: categoriesLoading } = useCategoriesQuery();
-  const { data: products, isLoading: productsLoading } = useOptimizedProductsQuery(selectedCategory);
+  const { data: products, isLoading: productsLoading } = useOptimizedProductsQuery(
+    selectedCategory,
+    4 
+  );
+
+  console.log("🏠 Index Page Products Debug:", {
+    selectedCategory,
+    productsCount: products?.length || 0,
+    productsLoading,
+    firstProductCategory: products?.[0]?.category?.name
+  });
 
   const isLoading = categoriesLoading || productsLoading;
 
@@ -51,7 +64,14 @@ const Index = () => {
             {isLoading ? (
               <LoadingSpinner size="lg" text="Loading products..." />
             ) : products ? (
-              <ProductGrid products={products} />
+              <>
+                <ProductGrid products={products} />
+                <div className="text-center mt-12">
+                  <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
+                    <Link to="/products">Show All Products</Link>
+                  </Button>
+                </div>
+              </>
             ) : (
               <div className="text-center py-12">
                 <p className="text-muted-foreground">No products found.</p>

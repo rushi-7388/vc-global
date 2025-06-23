@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -6,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { AdminProductList } from "@/components/AdminProductList";
 import { ProductForm } from "@/components/ProductForm";
+import { AdminSetup } from "@/components/AdminSetup";
 import { useAdminCheck } from "@/hooks/useAdminCheck";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { Navigate } from "react-router-dom";
 
 const AdminProducts = () => {
   const [showForm, setShowForm] = useState(false);
@@ -24,7 +23,21 @@ const AdminProducts = () => {
   }
 
   if (!isAdmin) {
-    return <Navigate to="/products" replace />;
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-primary mb-4">Admin Access Required</h1>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              You need admin privileges to access the product management area.
+            </p>
+          </div>
+          <AdminSetup />
+        </main>
+        <Footer />
+      </div>
+    );
   }
 
   const handleAddProduct = () => {

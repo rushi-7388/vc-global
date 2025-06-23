@@ -1,4 +1,3 @@
-
 import { useParams } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -15,7 +14,7 @@ const CategoryProducts = () => {
     cat.name.toLowerCase().replace(/\s+/g, '-') === categoryName?.toLowerCase()
   );
   
-  const { data: products, isLoading: productsLoading } = useOptimizedProductsQuery(category?.id);
+  const { data: products, isLoading: productsLoading } = useOptimizedProductsQuery(category?.name);
 
   const isLoading = categoriesLoading || productsLoading;
 

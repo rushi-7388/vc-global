@@ -1,46 +1,93 @@
-
+import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ProductGrid } from "@/components/ProductGrid";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { CategoryFilter } from "@/components/CategoryFilter";
+import { useProductsQuery } from "@/hooks/useProductsQuery";
+import { useCategoriesQuery } from "@/hooks/useCategoriesQuery";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { PerformanceMonitor } from "@/components/PerformanceMonitor";
-import { useOptimizedProductsQuery } from "@/hooks/useOptimizedProductsQuery";
+import { Button } from "@/components/ui/button";
 
 const Products = () => {
-  const { data: products, isLoading, error } = useOptimizedProductsQuery();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const pageSize = 12;
 
-  if (error) {
-    console.error('Error fetching products:', error);
-  }
+  const { data: categories, isLoading: categoriesLoading } = useCategoriesQuery();
+  const { 
+    data, 
+    isLoading: productsLoading,
+    error 
+  } = useProductsQuery({
+    categoryName: selectedCategory,
+    page,
+    pageSize,
+  });
+
+  const products = data?.products;
+  const count = data?.count ?? 0;
+  const totalPages = Math.ceil(count / pageSize);
+  const isLoading = categoriesLoading || productsLoading;
 
   return (
-    <ErrorBoundary>
-      <PerformanceMonitor />
-      <div className="min-h-screen bg-background">
-        <Header />
-        <main className="container mx-auto px-4 py-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-primary mb-4">Our Products</h1>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Discover our premium collection of tiles, marbles, and sanitary products. 
-              Each piece is carefully selected to ensure the highest quality and aesthetic appeal.
-            </p>
-          </div>
-          
-          {isLoading ? (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main className="container mx-auto px-4 py-12">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-primary mb-4">All Products</h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Browse our complete collection of premium tiles, marbles, and stones.
+          </p>
+        </div>
+
+        {categories && (
+          <CategoryFilter
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onCategoryChange={(category) => {
+              setSelectedCategory(category);
+              setPage(1); // Reset to first page on category change
+            }}
+          />
+        )}
+
+        {isLoading ? (
+          <div className="flex justify-center py-20">
             <LoadingSpinner size="lg" text="Loading products..." />
-          ) : error ? (
-            <div className="text-center py-16">
-              <p className="text-destructive text-lg">Failed to load products. Please try again.</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-20 text-red-500">
+            <p>Failed to load products. Please try again later.</p>
+          </div>
+        ) : products && products.length > 0 ? (
+          <>
+            <ProductGrid products={products} />
+            <div className="flex justify-center items-center space-x-4 mt-12">
+              <Button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+              >
+                Previous
+              </Button>
+              <span className="text-muted-foreground">
+                Page {page} of {totalPages}
+              </span>
+              <Button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+              >
+                Next
+              </Button>
             </div>
-          ) : (
-            <ProductGrid products={products || []} />
-          )}
-        </main>
-        <Footer />
-      </div>
-    </ErrorBoundary>
+          </>
+        ) : (
+          <div className="text-center py-20">
+            <p className="text-muted-foreground">No products found in this category.</p>
+          </div>
+        )}
+      </main>
+      <Footer />
+    </div>
   );
 };
 
