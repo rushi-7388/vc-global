@@ -32,11 +32,12 @@ export const AboutSection = () => {
     <section id="about" className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
+          <hr className="my-8 border-t border-gray-700" />
           <h2 className="text-4xl font-bold text-primary mb-4">
             Why Choose V&C Global?
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Excellence isn’t a promise — it’s our standard. When you choose us,
+            Excellence isn't a promise — it's our standard. When you choose us,
             you choose precision, integrity, and a partner committed to your
             success.
           </p>
@@ -74,9 +75,9 @@ export const AboutSection = () => {
                 just the trade, but the trust it carries.
               </p>
               <p className="text-muted-foreground mb-6">
-                V&C Global was born out of that passion — to represent India’s
+                V&C Global was born out of that passion — to represent India's
                 finest to the world with honesty, precision, and heart. Today,
-                every deal we make is more than business; it’s a reflection of
+                every deal we make is more than business; it's a reflection of
                 our values, our bond, and our unwavering commitment to quality.
               </p>
               {/* <div className="grid grid-cols-3 gap-4 text-center">
