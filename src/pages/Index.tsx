@@ -41,7 +41,7 @@ const Index = () => {
         <Header />
         <Hero />
         
-        <section id="products" className="py-20 bg-background">
+        <section id="products" className="py-4 bg-background">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-primary mb-4">
