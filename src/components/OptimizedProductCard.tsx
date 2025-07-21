@@ -1,7 +1,8 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { LazyImage } from '@/components/LazyImage';
+import { ProductImageGalleryModal } from './ProductImageGalleryModal';
 
 interface Product {
   id: string;
@@ -26,11 +27,31 @@ interface OptimizedProductCardProps {
 }
 
 const OptimizedProductCard = memo(({ product }: OptimizedProductCardProps) => {
+  const [galleryOpen, setGalleryOpen] = useState(false);
   const imageUrl = product.image_urls?.[0] || "https://images.unsplash.com/photo-1615971677499-5467cbab01c0?q=80&w=500";
+
+  // Helper function to get all product image URLs
+  const getAllProductImageUrls = () => {
+    let urls: string[] = [];
+    if (product.image_urls && product.image_urls.length > 0) {
+      urls = [...product.image_urls];
+    }
+    if ((product as any).image_files && (product as any).image_files.length > 0) {
+      const base = import.meta.env.VITE_SUPABASE_URL + "/storage/v1/object/public/product-images/";
+      urls = urls.concat((product as any).image_files.map((file: string) => `${base}${file}`));
+    }
+    if (urls.length === 0) {
+      urls = [
+        "https://images.unsplash.com/photo-1615971677499-5467cbab01c0?q=80&w=500",
+      ];
+    }
+    return urls;
+  };
+  const allImages = getAllProductImageUrls();
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-      <CardHeader className="p-0">
+      <CardHeader className="p-0 cursor-pointer relative" onClick={() => setGalleryOpen(true)}>
         <LazyImage
           src={imageUrl}
           alt={product.name}
@@ -55,12 +76,12 @@ const OptimizedProductCard = memo(({ product }: OptimizedProductCardProps) => {
         )}
         
         <div className="space-y-2 text-sm">
-          {product.price_per_sqft && (
+          {/* {product.price_per_sqft && (
             <div className="flex justify-between">
               <span className="text-muted-foreground">Price per sq ft:</span>
               <span className="font-medium">₹{product.price_per_sqft}</span>
             </div>
-          )}
+          )} */}
           
           {product.material_type && (
             <div className="flex justify-between">
@@ -77,6 +98,11 @@ const OptimizedProductCard = memo(({ product }: OptimizedProductCardProps) => {
           )}
         </div>
       </CardContent>
+      <ProductImageGalleryModal
+        images={allImages}
+        open={galleryOpen}
+        onOpenChange={setGalleryOpen}
+      />
     </Card>
   );
 }, (prevProps, nextProps) => {

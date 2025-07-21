@@ -32,7 +32,6 @@ export const AboutSection = () => {
     <section id="about" className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <hr className="my-8 border-t border-gray-700" />
           <h2 className="text-4xl font-bold text-primary mb-4">
             Why Choose V&C Global?
           </h2>

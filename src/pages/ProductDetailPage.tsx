@@ -142,8 +142,8 @@ const ProductDetailPage = () => {
             <div className="border-t border-border pt-6">
               <h3 className="text-lg font-semibold mb-4">Product Details</h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="font-medium text-muted-foreground">Price</div>
-                <div>₹{product.price_per_sqft}/sq ft</div>
+                {/* <div className="font-medium text-muted-foreground">Price</div>
+                <div>₹{product.price_per_sqft}/sq ft</div> */}
 
                 <div className="font-medium text-muted-foreground">Origin</div>
                 <div>{product.origin_country}</div>

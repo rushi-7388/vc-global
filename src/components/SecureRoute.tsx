@@ -1,5 +1,4 @@
 import { useEffect, useState, ReactNode } from 'react';
-import { useSecurity } from './SecurityProvider';
 import { LoadingSpinner } from './LoadingSpinner';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -13,26 +12,12 @@ interface SecureRouteProps {
 export const SecureRoute = ({ children, requireAuth = true, adminOnly = false }: SecureRouteProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const { isSecure, securityLevel, checkSecurity } = useSecurity();
   const { toast } = useToast();
 
   useEffect(() => {
     const verifyAccess = async () => {
       try {
         setIsLoading(true);
-
-        // Check security status
-        const securityCheck = await checkSecurity();
-        
-        if (!securityCheck) {
-          toast({
-            title: "Access Denied",
-            description: "Security verification failed.",
-            variant: "destructive",
-          });
-          setIsAuthorized(false);
-          return;
-        }
 
         // Check authentication if required
         if (requireAuth) {
@@ -83,7 +68,7 @@ export const SecureRoute = ({ children, requireAuth = true, adminOnly = false }:
     };
 
     verifyAccess();
-  }, [requireAuth, adminOnly, checkSecurity, toast]);
+  }, [requireAuth, adminOnly, toast]);
 
   // Show loading while checking
   if (isLoading) {
@@ -91,9 +76,6 @@ export const SecureRoute = ({ children, requireAuth = true, adminOnly = false }:
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <LoadingSpinner size="lg" text="Verifying access..." />
-          <p className="mt-4 text-sm text-muted-foreground">
-            Security Level: {securityLevel}
-          </p>
         </div>
       </div>
     );
@@ -125,25 +107,6 @@ export const SecureRoute = ({ children, requireAuth = true, adminOnly = false }:
             Go Back
           </button>
         </div>
-      </div>
-    );
-  }
-
-  // Show security warning if security level is low
-  if (securityLevel === 'low') {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="bg-yellow-50 border-b border-yellow-200 px-4 py-3">
-          <div className="flex items-center justify-center">
-            <svg className="w-5 h-5 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-            </svg>
-            <span className="text-sm text-yellow-800">
-              Security Warning: Your connection may not be secure. Please use HTTPS.
-            </span>
-          </div>
-        </div>
-        {children}
       </div>
     );
   }

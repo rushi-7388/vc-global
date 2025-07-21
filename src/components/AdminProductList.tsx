@@ -17,6 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { ProductImageGalleryModal } from "./ProductImageGalleryModal";
 
 interface AdminProductListProps {
   onEditProduct: (product: any) => void;
@@ -27,6 +28,7 @@ export const AdminProductList = ({ onEditProduct }: AdminProductListProps) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<any>(null);
   const { toast } = useToast();
+  const [galleryOpen, setGalleryOpen] = useState<{ open: boolean; images: string[] }>({ open: false, images: [] });
 
   console.log('Admin Products Data:', { products, isLoading, error });
 
@@ -87,6 +89,24 @@ export const AdminProductList = ({ onEditProduct }: AdminProductListProps) => {
     return null;
   };
 
+  // Helper function to get all product image URLs
+  const getAllProductImageUrls = (product: any) => {
+    let urls: string[] = [];
+    if (product.image_urls && product.image_urls.length > 0) {
+      urls = [...product.image_urls];
+    }
+    if (product.image_files && product.image_files.length > 0) {
+      const base = import.meta.env.VITE_SUPABASE_URL + "/storage/v1/object/public/product-images/";
+      urls = urls.concat(product.image_files.map((file: string) => `${base}${file}`));
+    }
+    if (urls.length === 0) {
+      urls = [
+        "https://images.unsplash.com/photo-1615971677499-5467cbab01c0?q=80&w=500",
+      ];
+    }
+    return urls;
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-64">
@@ -119,10 +139,11 @@ export const AdminProductList = ({ onEditProduct }: AdminProductListProps) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((product) => {
           const imageUrl = getProductImageUrl(product);
+          const allImages = getAllProductImageUrls(product);
           
           return (
             <Card key={product.id} className="overflow-hidden">
-              <div className="relative">
+              <div className="relative cursor-pointer" onClick={() => setGalleryOpen({ open: true, images: allImages })}>
                 {imageUrl ? (
                   <img
                     src={imageUrl}
@@ -158,14 +179,14 @@ export const AdminProductList = ({ onEditProduct }: AdminProductListProps) => {
                     </p>
                   )}
                   
-                  <div className="flex items-center justify-between text-sm">
+                  {/* <div className="flex items-center justify-between text-sm">
                     <span className="font-medium">
                       ₹{product.price_per_sqft || 'N/A'}/sq ft
                     </span>
                     <span className="text-muted-foreground">
                       {product.category?.name || 'No Category'}
                     </span>
-                  </div>
+                  </div> */}
                   
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span>
@@ -217,6 +238,12 @@ export const AdminProductList = ({ onEditProduct }: AdminProductListProps) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <ProductImageGalleryModal
+        images={galleryOpen.images}
+        open={galleryOpen.open}
+        onOpenChange={(open) => setGalleryOpen((prev) => ({ ...prev, open }))}
+      />
     </div>
   );
 };

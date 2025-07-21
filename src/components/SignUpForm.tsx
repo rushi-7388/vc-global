@@ -81,7 +81,7 @@ export const SignUpForm = ({ onSuccess, onSwitchToSignIn }: SignUpFormProps) => 
 
   return (
     <div className="w-full max-w-sm sm:max-w-md mx-auto border-black px-4 sm:px-0">
-      <Card className="w-full shadow-lg border-black border-20 bg-background backdrop-blur-sm">
+      <Card className="w-full shadow-lg border-black border-20 bg-background backdrop-blur-sm bg-black">
         <CardHeader className="space-y-3 pb-6">
           <CardTitle className="text-2xl sm:text-3xl font-bold text-center bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
             Create Account

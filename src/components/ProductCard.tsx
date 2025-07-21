@@ -3,6 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { MapPin, Ruler, Layers, Crown, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { ProductImageGalleryModal } from "./ProductImageGalleryModal";
+import { cn } from "@/lib/utils";
 
 interface Product {
   id: string;
@@ -25,9 +28,12 @@ interface Product {
 
 interface ProductCardProps {
   product: Product;
+  viewMode?: 'grid' | 'list';
 }
 
-export const ProductCard = ({ product }: ProductCardProps) => {
+export const ProductCard = ({ product, viewMode = 'grid' }: ProductCardProps) => {
+  const [galleryOpen, setGalleryOpen] = useState(false);
+
   // Helper function to get the best available image URL
   const getProductImageUrl = () => {
     // First try image_urls (backward compatibility)
@@ -39,7 +45,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     if (product.image_files && product.image_files.length > 0) {
       // Construct URL from storage bucket
       const fileName = product.image_files[0];
-      return `${process.env.VITE_SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
+      return `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
     }
     
     // Fallback to placeholder
@@ -48,9 +54,128 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
   const imageUrl = getProductImageUrl();
 
+  // Helper function to get all product image URLs
+  const getAllProductImageUrls = () => {
+    let urls: string[] = [];
+    if (product.image_urls && product.image_urls.length > 0) {
+      urls = [...product.image_urls];
+    }
+    if (product.image_files && product.image_files.length > 0) {
+      const base = import.meta.env.VITE_SUPABASE_URL + "/storage/v1/object/public/product-images/";
+      urls = urls.concat(product.image_files.map((file) => `${base}${file}`));
+    }
+    if (urls.length === 0) {
+      urls = [
+        "https://images.unsplash.com/photo-1615971677499-5467cbab01c0?q=80&w=500",
+      ];
+    }
+    return urls;
+  };
+  const allImages = getAllProductImageUrls();
+
+  if (viewMode === 'list') {
+    return (
+      <Card className="group hover:shadow-xl transition-all duration-300 overflow-hidden bg-card border-border">
+        <div className="flex">
+          {/* Image Section */}
+          <div className="relative cursor-pointer flex-shrink-0" onClick={() => setGalleryOpen(true)}>
+            <img
+              src={imageUrl}
+              alt={product.name}
+              className="w-48 h-32 object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+            
+            {product.is_premium && (
+              <Badge className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs">
+                <Crown className="h-3 w-3 mr-1" />
+                Premium
+              </Badge>
+            )}
+            
+            {product.category && (
+              <Badge variant="secondary" className="absolute top-2 right-2 text-xs">
+                {product.category.name}
+              </Badge>
+            )}
+          </div>
+          
+          {/* Content Section */}
+          <div className="flex-1 flex flex-col">
+            <CardContent className="p-4 flex-1">
+              <div className="space-y-3">
+                <div>
+                  <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
+                    {product.name}
+                  </h3>
+                  {product.description && (
+                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                      {product.description}
+                    </p>
+                  )}
+                </div>
+                
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  {/* {product.price_per_sqft && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Price:</span>
+                      <span className="font-semibold text-primary">
+                        ₹{product.price_per_sqft}/sqft
+                      </span>
+                    </div>
+                  )} */}
+                  
+                  {product.origin_country && (
+                    <div className="flex items-center">
+                      <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
+                      <span>{product.origin_country}</span>
+                    </div>
+                  )}
+                  
+                  {product.material_type && (
+                    <div className="flex items-center">
+                      <Layers className="h-4 w-4 mr-2 text-muted-foreground" />
+                      <span>{product.material_type}</span>
+                    </div>
+                  )}
+                  
+                  {product.thickness_mm && (
+                    <div className="flex items-center">
+                      <Ruler className="h-4 w-4 mr-2 text-muted-foreground" />
+                      <span>{product.thickness_mm}mm</span>
+                    </div>
+                  )}
+                </div>
+                
+                {product.size_options && product.size_options.length > 0 && (
+                  <div className="text-sm text-muted-foreground">
+                    <span className="font-medium">Sizes: </span>
+                    {product.size_options.join(', ')}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+            
+            <CardFooter className="p-4 bg-muted/20">
+              <Button asChild size="sm">
+                <Link to={`/product/${product.id}`}>View Details</Link>
+              </Button>
+            </CardFooter>
+          </div>
+        </div>
+        
+        <ProductImageGalleryModal
+          images={allImages}
+          open={galleryOpen}
+          onOpenChange={setGalleryOpen}
+        />
+      </Card>
+    );
+  }
+
+  // Grid view (default)
   return (
     <Card className="group hover:shadow-xl transition-all duration-300 overflow-hidden bg-card border-border">
-      <div className="relative">
+      <div className="relative cursor-pointer" onClick={() => setGalleryOpen(true)}>
         <img
           src={imageUrl}
           alt={product.name}
@@ -85,14 +210,14 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           </div>
           
           <div className="space-y-2">
-            {product.price_per_sqft && (
+            {/* {product.price_per_sqft && (
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Price per sq ft:</span>
                 <span className="font-semibold text-lg text-primary">
                   ₹{product.price_per_sqft}
                 </span>
               </div>
-            )}
+            )} */}
             
             <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
               {product.origin_country && (
@@ -137,6 +262,11 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           <Link to={`/product/${product.id}`}>View Details</Link>
         </Button>
       </CardFooter>
+      <ProductImageGalleryModal
+        images={allImages}
+        open={galleryOpen}
+        onOpenChange={setGalleryOpen}
+      />
     </Card>
   );
 };
