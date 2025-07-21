@@ -1,55 +1,32 @@
-import { useState, useEffect } from "react"
-import { useNavigate, useLocation } from "react-router-dom"
+import { useState } from "react"
 import { LoginForm } from "@/components/LoginForm"
 import { SignUpForm } from "@/components/SignUpForm"
-import { Header } from "@/components/Header"
-import { Footer } from "@/components/Footer"
+import { useNavigate } from "react-router-dom"
 
-const Auth = () => {
-  const [isSignUp, setIsSignUp] = useState(false)
+export default function Auth() {
+  const [isLogin, setIsLogin] = useState(true)
   const navigate = useNavigate()
-  const location = useLocation()
-
-  // Get the intended destination from URL search params or default to home
-  const getIntendedDestination = () => {
-    const params = new URLSearchParams(location.search)
-    const redirectTo = params.get('redirectTo')
-    return redirectTo || '/'
-  }
-
-  const handleSwitchToSignUp = () => {
-    setIsSignUp(true)
-  }
-
-  const handleSwitchToSignIn = () => {
-    setIsSignUp(false)
-  }
 
   const handleAuthSuccess = () => {
-    // Redirect to intended destination after successful auth
-    const destination = getIntendedDestination()
-    navigate(destination, { replace: true })
+    navigate("/")
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Header />
-      <main className="flex-1 flex items-center justify-center p-4">
-        {isSignUp ? (
-          <SignUpForm 
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 p-4">
+      <div className="w-full max-w-md">
+        {/* Auth Form */}
+        {isLogin ? (
+          <LoginForm
             onSuccess={handleAuthSuccess}
-            onSwitchToSignIn={handleSwitchToSignIn}
+            onSwitchToSignUp={() => setIsLogin(false)}
           />
         ) : (
-          <LoginForm 
+          <SignUpForm
             onSuccess={handleAuthSuccess}
-            onSwitchToSignUp={handleSwitchToSignUp}
+            onSwitchToSignIn={() => setIsLogin(true)}
           />
         )}
-      </main>
-      <Footer />
+      </div>
     </div>
   )
 }
-
-export default Auth

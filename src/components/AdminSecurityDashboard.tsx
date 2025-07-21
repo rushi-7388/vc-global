@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { LoadingSpinner } from './LoadingSpinner';
 import { useToast } from '@/hooks/use-toast';
 import { UserBlockingSystem, BlockedUser, SecurityEvent } from '@/utils/userBlocking';
+import { supabase } from '@/integrations/supabase/client';
 
 interface SecurityStats {
   totalEvents: number;
@@ -21,6 +22,44 @@ interface SecurityStats {
   suspiciousActivities: number;
   recentEvents: SecurityEvent[];
 }
+
+// function TestSupabaseConnectionButton() {
+//   const { toast } = useToast();
+//   const [loading, setLoading] = useState(false);
+
+//   const handleTest = async () => {
+//     setLoading(true);
+//     try {
+//       const { data, error } = await supabase.from('products').select('*').limit(1);
+//       if (error) {
+//         toast({
+//           title: 'Supabase Connection Error',
+//           description: error.message,
+//           variant: 'destructive',
+//         });
+//       } else {
+//         toast({
+//           title: 'Supabase Connection Successful',
+//           description: data && data.length > 0 ? 'Sample data loaded.' : 'Connected, but no data found.',
+//         });
+//       }
+//     } catch (err) {
+//       toast({
+//         title: 'Unexpected Error',
+//         description: err instanceof Error ? err.message : 'Unknown error',
+//         variant: 'destructive',
+//       });
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <Button onClick={handleTest} disabled={loading} variant="outline" className="mb-4">
+//       {loading ? 'Testing...' : 'Test Supabase Connection'}
+//     </Button>
+//   );
+// }
 
 export const AdminSecurityDashboard = () => {
   const [stats, setStats] = useState<SecurityStats | null>(null);
@@ -162,6 +201,7 @@ export const AdminSecurityDashboard = () => {
 
   return (
     <div className="space-y-6">
+      {/* <TestSupabaseConnectionButton /> */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Security Dashboard</h1>

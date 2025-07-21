@@ -1,11 +1,13 @@
 import { ProductCard } from "@/components/ProductCard";
 import { Product } from "@/integrations/supabase/types";
+import { cn } from "@/lib/utils";
 
 interface ProductGridProps {
   products?: Product[];
+  viewMode?: 'grid' | 'list';
 }
 
-export const ProductGrid = ({ products = [] }: ProductGridProps) => {
+export const ProductGrid = ({ products = [], viewMode = 'grid' }: ProductGridProps) => {
   if (products.length === 0) {
     return (
       <div className="text-center py-16">
@@ -15,9 +17,18 @@ export const ProductGrid = ({ products = [] }: ProductGridProps) => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+    <div className={cn(
+      "gap-6",
+      viewMode === 'grid' 
+        ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
+        : "flex flex-col space-y-4"
+    )}>
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard 
+          key={product.id} 
+          product={product} 
+          viewMode={viewMode}
+        />
       ))}
     </div>
   );

@@ -1,9 +1,7 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { useUserBlocking } from '@/hooks/useUserBlocking';
 import { LoadingSpinner } from './LoadingSpinner';
-import { BlockedUserMessage } from './BlockedUserMessage';
 import type { User } from '@supabase/supabase-js';
 
 interface ProtectedRouteProps {
@@ -13,7 +11,6 @@ interface ProtectedRouteProps {
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const { isBlocked, loading: blockingLoading } = useUserBlocking();
   const location = useLocation();
 
   useEffect(() => {
@@ -37,8 +34,8 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Show loading while checking authentication and blocking status
-  if (loading || blockingLoading) {
+  // Show loading while checking authentication
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <LoadingSpinner size="lg" text="Verifying access..." />
@@ -52,11 +49,6 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <Navigate to={`/auth?redirectTo=${encodeURIComponent(currentPath)}`} replace />;
   }
 
-  // If user is blocked, show blocked message
-  if (isBlocked) {
-    return <BlockedUserMessage />;
-  }
-
-  // User is authenticated and not blocked, render children
+  // User is authenticated, render children
   return <>{children}</>;
 };

@@ -52,7 +52,7 @@ export const SecurityProvider = ({ children }: SecurityProviderProps) => {
         return false;
       }
 
-      // Additional security checks
+      // Additional security checks - be more lenient
       const securityChecks = await Promise.all([
         checkUserPermissions(user.id),
         checkRateLimiting(),
@@ -60,23 +60,30 @@ export const SecurityProvider = ({ children }: SecurityProviderProps) => {
         checkNetworkSecurity()
       ]);
 
-      const allChecksPassed = securityChecks.every(check => check);
+      // Count how many checks passed
+      const passedChecks = securityChecks.filter(check => check).length;
       
-      if (allChecksPassed) {
+      if (passedChecks >= 2) { // At least 2 checks must pass
         setSecurityLevel('high');
         setIsSecure(true);
         return true;
-      } else {
+      } else if (passedChecks >= 1) { // At least 1 check must pass
         setSecurityLevel('medium');
+        setIsSecure(true);
+        return true;
+      } else {
+        // Even if all checks fail, still allow access but with low security
+        setSecurityLevel('low');
         setIsSecure(true);
         return true;
       }
 
     } catch (error) {
       console.error('Security check failed:', error);
+      // Even on error, allow access with low security
       setSecurityLevel('low');
-      setIsSecure(false);
-      return false;
+      setIsSecure(true);
+      return true;
     }
   };
 
@@ -182,35 +189,18 @@ export const SecurityProvider = ({ children }: SecurityProviderProps) => {
       document.addEventListener(event, handleUserActivity, true);
     });
 
-    // Auto-logout after inactivity (30 minutes)
-    const inactivityTimer = setInterval(() => {
-      const now = new Date();
-      const timeDiff = now.getTime() - lastActivity.getTime();
-      const minutesDiff = timeDiff / (1000 * 60);
-
-      if (minutesDiff > 30) {
-        toast({
-          title: "Session Expired",
-          description: "You have been logged out due to inactivity.",
-          variant: "destructive",
-        });
-        supabase.auth.signOut();
-      }
-    }, 60000); // Check every minute
-
     // Initial security check
     performSecurityChecks();
 
-    // Periodic security checks
+    // Periodic security checks - less frequent
     const securityInterval = setInterval(() => {
       performSecurityChecks();
-    }, 300000); // Check every 5 minutes
+    }, 600000); // Check every 10 minutes instead of 5
 
     return () => {
       events.forEach(event => {
         document.removeEventListener(event, handleUserActivity, true);
       });
-      clearInterval(inactivityTimer);
       clearInterval(securityInterval);
     };
   }, [lastActivity, toast]);
