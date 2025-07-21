@@ -8,7 +8,6 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "test": "jest",
     "preview": "vite preview",
     "supabase": "npx supabase",
     "supabase:init": "npx supabase init",
